@@ -7,6 +7,7 @@ import { DAGGER_MATRIX, LOWER_MATRIX, matExp, matrixToLatex } from './utils';
 interface LatexRendererProps {
     latex: string;
     className?: string;
+    displayMode?: boolean;
 }
 
 const MatrixTooltip: React.FC<{ dagger: boolean; exp: number; className?: string }> = ({ dagger, exp, className = '' }) => {
@@ -43,7 +44,7 @@ const MatrixTooltip: React.FC<{ dagger: boolean; exp: number; className?: string
     return <span ref={tooltipRef} className={className} />;
 };
 
-const LatexRenderer: React.FC<LatexRendererProps> = ({ latex, className = '' }) => {
+const LatexRenderer: React.FC<LatexRendererProps> = ({ latex, className = '', displayMode = true }) => {
     const containerRef = useRef<HTMLSpanElement>(null);
     const [hoveredElement, setHoveredElement] = useState<{ element: HTMLElement; isDagger: boolean; x: number; y: number, exp: number } | null>(null);
 
@@ -54,7 +55,7 @@ const LatexRenderer: React.FC<LatexRendererProps> = ({ latex, className = '' }) 
                     throwOnError: true,
                     // errorColor: '#000', 
                     strict: false,
-                    displayMode: true,
+                    displayMode,
                     trust: true,
                 });
 
@@ -107,7 +108,7 @@ const LatexRenderer: React.FC<LatexRendererProps> = ({ latex, className = '' }) 
                 // containerRef.current.style.fontSize = '0.75em'; // Optional: Adjust font size for better visibility
             }
         }
-    }, [latex]);
+    }, [displayMode, latex]);
     // const daggerMatrix = String.raw`\begin{bmatrix} 0 & 0 & 0 \\ 1 & 0 & 0 \\ 0 & 1 & 0 \end{bmatrix}`; // Creation operator
     // const nonDaggerMatrix = String.raw`\begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 2 \\ 0 & 0 & 0 \end{bmatrix}`; // Annihilation operator
 

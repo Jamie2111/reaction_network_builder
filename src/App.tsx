@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import { formatReactionEquation, formatSecondQuantizedForm, type RawElementaryStep, type ReactionType } from './utils'
+import { FULL_PAPER, PAPER_DETAILS, PAPER_SECTIONS, SCHLOGL_PRESET, type FullPaperSection, type PedagogySection } from './content'
 
 import 'katex/dist/katex.min.css'
 import "katex/dist/contrib/mhchem.mjs";
@@ -11,7 +12,7 @@ const STORAGE_KEYS = {
   CURRENT_STEP: 'current-elementary-step'
 };
 
-const saveToStorage = (key: string, value: any) => {
+const saveToStorage = (key: string, value: unknown) => {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch (error) {
@@ -29,10 +30,101 @@ const loadFromStorage = function <T>(key: string, defaultValue: T): T {
   }
 };
 
+const emptyCurrentStep = {
+  id: '',
+  reactants: 'A + B',
+  products: 'C + D',
+  type: 'forward' as ReactionType,
+  forwardRate: 'c_f',
+  reverseRate: 'c_r',
+};
 
+const renderInlineMath = (text: string) => {
+  return text.split(/(\$[^$]+\$)/g).filter(Boolean).map((part, index) => {
+    if (part.startsWith('$') && part.endsWith('$')) {
+      return (
+        <LatexRenderer
+          key={`${part}-${index}`}
+          latex={part.slice(1, -1)}
+          className="inline-latex"
+          displayMode={false}
+        />
+      );
+    }
 
+    return <span key={`${part}-${index}`}>{part}</span>;
+  });
+};
 
+const PedagogyPanel: React.FC<{ section: PedagogySection; defaultOpen?: boolean }> = ({
+  section,
+  defaultOpen = false,
+}) => {
+  return (
+    <details className="pedagogy-panel" open={defaultOpen}>
+      <summary className="pedagogy-summary">
+        <span className="pedagogy-title">{section.title}</span>
+        <span className="pedagogy-tagline">{section.summary}</span>
+      </summary>
 
+      <div className="pedagogy-content">
+        {section.paragraphs.map((paragraph, index) => (
+          <p key={`${section.id}-paragraph-${index}`} className="pedagogy-paragraph">
+            {renderInlineMath(paragraph)}
+          </p>
+        ))}
+
+        {section.equations?.map((equation, index) => (
+          <div key={`${section.id}-equation-${index}`} className="pedagogy-equation">
+            {equation.label ? <p className="pedagogy-equation-label">{equation.label}</p> : null}
+            <div className="pedagogy-equation-box">
+              <LatexRenderer latex={equation.latex} className="latex-equation" />
+            </div>
+          </div>
+        ))}
+
+        {section.bullets?.length ? (
+          <ul className="pedagogy-list">
+            {section.bullets.map((bullet) => (
+              <li key={bullet}>{bullet}</li>
+            ))}
+          </ul>
+        ) : null}
+      </div>
+    </details>
+  );
+};
+
+const FullPaperPanel: React.FC<{ section: FullPaperSection }> = ({ section }) => {
+  return (
+    <section className="full-paper-section">
+      <h4 className="full-paper-section-title">{section.title}</h4>
+
+      {section.paragraphs.map((paragraph, index) => (
+        <p key={`${section.id}-paragraph-${index}`} className="pedagogy-paragraph">
+          {renderInlineMath(paragraph)}
+        </p>
+      ))}
+
+      {section.equations?.map((equation, index) => (
+        <div key={`${section.id}-equation-${index}`} className="pedagogy-equation">
+          {equation.label ? <p className="pedagogy-equation-label">{equation.label}</p> : null}
+          <div className="pedagogy-equation-box">
+            <LatexRenderer latex={equation.latex} className="latex-equation" />
+          </div>
+        </div>
+      ))}
+
+      {section.bullets?.length ? (
+        <ul className="pedagogy-list">
+          {section.bullets.map((bullet) => (
+            <li key={bullet}>{bullet}</li>
+          ))}
+        </ul>
+      ) : null}
+    </section>
+  );
+};
 
 const SecondQuantizedRenderer: React.FC<{
   step: RawElementaryStep;
@@ -82,12 +174,7 @@ function App() {
 
   const [currentStep, setCurrentStep] = useState<RawElementaryStep>(() =>
     loadFromStorage(STORAGE_KEYS.CURRENT_STEP, {
-      id: '',
-      reactants: 'A + B',
-      products: 'C + D',
-      type: 'forward' as ReactionType,
-      forwardRate: 'c_f',
-      reverseRate: 'c_r',
+      ...emptyCurrentStep,
     })
   );
 
@@ -131,6 +218,22 @@ function App() {
     }
   };
 
+  const loadSchloglPreset = () => {
+    const nextSteps = SCHLOGL_PRESET.map((step, index) => ({
+      ...step,
+      id: `step-${idCounter + index}`
+    }));
+
+    setSteps(nextSteps);
+    setCurrentStep({ ...SCHLOGL_PRESET[0], id: '' });
+    setIdCounter((prev) => prev + SCHLOGL_PRESET.length);
+  };
+
+  const clearMechanism = () => {
+    setSteps([]);
+    setCurrentStep({ ...emptyCurrentStep });
+  };
+
   const deleteStep = (id: string) => {
     setSteps(prevSteps => prevSteps.filter(step => step.id !== id));
   };
@@ -149,6 +252,32 @@ function App() {
         <div className="main-content">
           <div className="step-builder">
             <h2 className="form-title">Add Elementary Step</h2>
+
+            <div className="paper-tools">
+              <div className="paper-tools-header">
+                <h3 className="paper-tools-title">Paper Preset</h3>
+                <p className="paper-tools-copy">
+                  Load the reversible Schlogl model used throughout the Nicholson-Gingrich rate-switching example.
+                </p>
+              </div>
+
+              <div className="paper-tools-actions">
+                <button
+                  className="secondary-btn"
+                  onClick={loadSchloglPreset}
+                  type="button"
+                >
+                  Load Schlogl Preset
+                </button>
+                <button
+                  className="secondary-btn secondary-btn-light"
+                  onClick={clearMechanism}
+                  type="button"
+                >
+                  Clear Mechanism
+                </button>
+              </div>
+            </div>
 
             <div className="reaction-builder">
               <div className="reactants-section">
@@ -303,6 +432,50 @@ function App() {
                 ))}
               </div>
             )}
+
+            <section className="paper-companion">
+              <div className="paper-companion-header">
+                <h2 className="form-title paper-companion-title">Paper Companion</h2>
+                <div className="paper-meta-card">
+                  <p className="paper-meta-title">{PAPER_DETAILS.title}</p>
+                  <p className="paper-meta-line">{PAPER_DETAILS.authors}</p>
+                  <p className="paper-meta-line">{PAPER_DETAILS.journal}</p>
+                  <p className="paper-meta-line">DOI: {PAPER_DETAILS.doi}</p>
+                </div>
+              </div>
+
+              <div className="paper-panels">
+                {PAPER_SECTIONS.map((section, index) => (
+                  <PedagogyPanel
+                    key={section.id}
+                    section={section}
+                    defaultOpen={index === 0}
+                  />
+                ))}
+
+                <details className="pedagogy-panel" open={false}>
+                  <summary className="pedagogy-summary">
+                    <span className="pedagogy-title">{FULL_PAPER.title}</span>
+                    <span className="pedagogy-tagline">{FULL_PAPER.intro}</span>
+                  </summary>
+
+                  <div className="pedagogy-content full-paper-content">
+                    {FULL_PAPER.sections.map((section) => (
+                      <FullPaperPanel key={section.id} section={section} />
+                    ))}
+
+                    <section className="full-paper-section">
+                      <h4 className="full-paper-section-title">References</h4>
+                      <ol className="full-paper-references">
+                        {FULL_PAPER.references.map((reference) => (
+                          <li key={reference}>{reference}</li>
+                        ))}
+                      </ol>
+                    </section>
+                  </div>
+                </details>
+              </div>
+            </section>
           </div>
         </div>
       </div>

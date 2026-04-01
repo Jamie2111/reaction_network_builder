@@ -130,8 +130,7 @@ export const parseRawElementaryStep = (step: RawElementaryStep): ParsedStep => {
         if (!input.trim()) {
             return [];
         }
-        // console.log(step);
-        return input.split(' + ').map(species => {
+        return input.split(/\s*\+\s*/).map(species => {
             // console.log('Parsing species:', species);
             const trimmed = species.trim();
 
@@ -178,8 +177,8 @@ export const formatReactionEquation = (step: RawElementaryStep): string => {
     const normalizedProducts = step.products;
 
     let arrow: string;
-    let forwardRate = step.forwardRate ? step.forwardRate.trim() : 'c_f';
-    let backwardRate = step.reverseRate ? step.reverseRate.trim() : 'c_r';
+    const forwardRate = step.forwardRate ? step.forwardRate.trim() : 'c_f';
+    const backwardRate = step.reverseRate ? step.reverseRate.trim() : 'c_r';
 
     switch (step.type) {
         case 'forward':
@@ -193,7 +192,7 @@ export const formatReactionEquation = (step: RawElementaryStep): string => {
             break;
     }
 
-    let res = `\\ce{${normalizedReactants} ${arrow} ${normalizedProducts}}`;
+    const res = `\\ce{${normalizedReactants} ${arrow} ${normalizedProducts}}`;
     // console.log('Formatted reaction equation:', res);
     return res;
 };
