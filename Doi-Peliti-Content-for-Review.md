@@ -62,7 +62,7 @@ The reverse step follows the same construction applied to the reversed reaction 
 
 ## Building the generator
 
-A reaction mechanism comprises several elementary reactions, and its generator $\hat{H}$ is the sum of the operator terms of the individual steps, so the mechanism assembled in the builder corresponds to a single matrix. Because each term is constructed as gain minus loss, the sum conserves total probability, and $\hat{H}$ is a bona fide generator of a stochastic process.
+A reaction mechanism comprises several elementary reactions, and its generator $\hat{H}$ is the sum of the operator terms of the individual steps, so the mechanism assembled in the builder corresponds to a single matrix. Because each term is constructed as gain minus loss, the sum conserves total probability, the defining property of a stochastic generator.
 
 This generator specifies the full dynamics. The distribution evolves under a single linear equation whose formal solution is a matrix exponential, so that the entire time evolution is determined by $\hat{H}$ and the initial condition,
 

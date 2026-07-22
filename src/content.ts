@@ -178,7 +178,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
     body: [
       {
         kind: 'p',
-        text: 'A reaction mechanism comprises several elementary reactions, and its generator $\\hat{H}$ is the sum of the operator terms of the individual steps, so the mechanism assembled in the builder corresponds to a single matrix. Because each term is constructed as gain minus loss, the sum conserves total probability, and $\\hat{H}$ is a bona fide generator of a stochastic process.',
+        text: 'A reaction mechanism comprises several elementary reactions, and its generator $\\hat{H}$ is the sum of the operator terms of the individual steps, so the mechanism assembled in the builder corresponds to a single matrix. Because each term is constructed as gain minus loss, the sum conserves total probability, the defining property of a stochastic generator.',
       },
       {
         kind: 'p',
