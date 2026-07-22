@@ -112,7 +112,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'p',
-        text: 'A caveat on notation is warranted. The dagger is an algebraic label rather than a Hermitian adjoint. The Doi-Peliti construction borrows the symbols of second quantization, but the evolved object is a classical probability distribution, and the inner product of quantum mechanics does not apply.',
+        text: 'A caveat on notation is warranted. The dagger is an algebraic label rather than a Hermitian conjugate. The Doi-Peliti construction borrows the symbols of second quantization, but the evolved object is a classical probability distribution, and the inner product of quantum mechanics does not apply.',
       },
       {
         kind: 'p',

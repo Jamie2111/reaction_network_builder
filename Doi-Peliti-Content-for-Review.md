@@ -30,7 +30,7 @@ Combinatorial factors therefore arise automatically. A step that consumes two mo
 
 $$a^2\left|n\right\rangle = n(n-1)\left|n-2\right\rangle .$$
 
-A caveat on notation is warranted. The dagger is an algebraic label rather than a Hermitian adjoint. The Doi-Peliti construction borrows the symbols of second quantization, but the evolved object is a classical probability distribution, and the inner product of quantum mechanics does not apply.
+A caveat on notation is warranted. The dagger is an algebraic label rather than a Hermitian conjugate. The Doi-Peliti construction borrows the symbols of second quantization, but the evolved object is a classical probability distribution, and the inner product of quantum mechanics does not apply.
 
 The builder below assembles elementary steps and displays each reaction as a balanced equation together with its generated operator term; hovering over an operator reveals the truncated matrix it represents. The preset loads the reversible Schlogl model, a standard test case for stochastic bistability and switching.
 
