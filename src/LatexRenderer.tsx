@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import katex from 'katex';
 import "katex/dist/katex.min.css"
 import "katex/dist/contrib/mhchem.mjs";
@@ -82,8 +83,10 @@ const LatexRenderer: React.FC<LatexRendererProps> = ({ latex, className = '', di
                             element: target,
                             exp,
                             isDagger: !!isDagger,
-                            x: rect.left + rect.width / 2,
-                            y: rect.top
+                            // document-space coordinates so the tooltip tracks the
+                            // operator correctly through scrolling and browser zoom
+                            x: rect.left + rect.width / 2 + window.scrollX,
+                            y: rect.top + window.scrollY
                         });
                     };
 
@@ -115,25 +118,27 @@ const LatexRenderer: React.FC<LatexRendererProps> = ({ latex, className = '', di
     return (
         <>
             <span ref={containerRef} className={className} />
-            {hoveredElement && (
-                <div
-                    className="matrix-tooltip"
-                    style={{
-                        position: 'fixed',
-                        left: hoveredElement.x,
-                        top: hoveredElement.y - 10,
-                        transform: 'translate(-50%, -100%)',
-                        zIndex: 1000,
-                        pointerEvents: 'none'
-                    }}
-                >
-                    <MatrixTooltip
-                        dagger={hoveredElement.isDagger}
-                        exp={hoveredElement.exp} // Assuming exponent is always 1 for the tooltip
-                        className="matrix-tooltip-content"
-                    />
-                </div>
-            )}
+            {hoveredElement &&
+                createPortal(
+                    <div
+                        className="matrix-tooltip"
+                        style={{
+                            position: 'absolute',
+                            left: hoveredElement.x,
+                            top: hoveredElement.y - 10,
+                            transform: 'translate(-50%, -100%)',
+                            zIndex: 1000,
+                            pointerEvents: 'none'
+                        }}
+                    >
+                        <MatrixTooltip
+                            dagger={hoveredElement.isDagger}
+                            exp={hoveredElement.exp} // Assuming exponent is always 1 for the tooltip
+                            className="matrix-tooltip-content"
+                        />
+                    </div>,
+                    document.body
+                )}
         </>
     );
 };

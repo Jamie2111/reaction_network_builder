@@ -1,25 +1,41 @@
 import type { RawElementaryStep } from './utils'
 
-export interface PedagogyEquation {
-  label?: string
-  latex: string
+//
+// Content model for the article. A section is an ordered list of blocks so that
+// display equations sit inline, between the paragraphs that motivate them, the
+// way a TensorNetwork.org page reads.
+//
+
+/** Interactive widgets and diagrams the page can drop into a section. */
+export type SectionWidget =
+  | 'builder'
+  | 'liveOperator'
+  | 'interactiveChain'
+  | 'factorFig'
+  | 'contractionFig'
+  | 'mpsFig'
+  | 'mpoFig'
+
+export type Block =
+  | { kind: 'p'; text: string }
+  | { kind: 'eq'; latex: string }
+  | { kind: 'bullets'; items: string[] }
+  | { kind: 'widget'; widget: SectionWidget }
+
+export interface ArticleSection {
+  /** anchor id, also used for the table of contents */
+  id: string
+  /** rendered as a level-2 heading */
+  title: string
+  body: Block[]
 }
 
-export interface PedagogySection {
-  id: string
-  title: string
-  summary: string
-  paragraphs: string[]
-  equations?: PedagogyEquation[]
-  bullets?: string[]
-}
-
-export interface FullPaperSection {
-  id: string
-  title: string
-  paragraphs: string[]
-  equations?: PedagogyEquation[]
-  bullets?: string[]
+export interface Reference {
+  n: number
+  text: string
+  /** outbound link to the paper, rendered as a trailing identifier like the TN.org references */
+  href?: string
+  hrefLabel?: string
 }
 
 export const SCHLOGL_PRESET: Omit<RawElementaryStep, 'id'>[] = [
@@ -39,311 +55,261 @@ export const SCHLOGL_PRESET: Omit<RawElementaryStep, 'id'>[] = [
   },
 ]
 
-export const PAPER_DETAILS = {
-  title: 'Quantifying Rare Events in Stochastic Reaction-Diffusion Dynamics Using Tensor Networks',
-  authors: 'Schuyler B. Nicholson and Todd R. Gingrich',
-  journal: 'Physical Review X 13, 041006 (2023)',
-  doi: '10.1103/PhysRevX.13.041006',
+export const PAGE = {
+  title: 'Doi-Peliti Method',
+  synopsis: [
+    'The Doi-Peliti method[[c:1,2]] recasts the dynamics of a stochastic chemical reaction network as a single linear operator acting on a vector of configuration probabilities. Working in terms of integer molecule counts rather than continuous concentrations expresses each reaction as a product of creation and annihilation operators, and the combinatorial factors associated with indistinguishable reactants are generated automatically by the operator algebra.',
+    'This operator representation is also the natural point of departure for tensor-network methods. The probability vector is represented as a Matrix Product State and the generator as a Matrix Product Operator, so that a state space growing as $d^{L}$ can be stored and propagated within a controllable memory budget[[c:7]]. The builder below assembles a reaction mechanism and displays the corresponding operator form and tensor diagrams.',
+  ],
 }
 
-export const PAPER_SECTIONS: PedagogySection[] = [
+export const ARTICLE_SECTIONS: ArticleSection[] = [
   {
-    id: 'how-to-use',
-    title: 'How To Use This Page',
-    summary: 'Start from the paper model, inspect the operator form, and use the notes below as a reading companion.',
-    paragraphs: [
-      'This site now works as both a reaction-mechanism builder and a guided Doi-Peliti explainer. The quickest path into the Nicholson-Gingrich paper is to load the Schlogl preset, inspect the reversible steps, and then compare the generated operator expressions with the notes below.',
-    ],
-    bullets: [
-      'Load the Schlogl preset to reproduce the paper\'s two reversible reaction families.',
-      'Use the reaction builder to edit stoichiometry or rates and watch the second-quantized form update immediately.',
-      'Hover the operator symbols in the generated expressions to see the truncated matrix representation used by the interface.',
-    ],
-  },
-  {
-    id: 'why-doi-peliti',
-    title: 'Why Stochastic Modeling And Why Doi-Peliti',
-    summary: 'At small copy number, chemistry is about fluctuating probabilities rather than deterministic concentrations.',
-    paragraphs: [
-      'Ordinary differential equations track average concentrations. That viewpoint is often enough for bulk chemistry, but it misses the timing noise that matters in gene regulation, intracellular signaling, and rare switching problems. In those settings the basic object is a probability distribution over molecule counts.',
-      'The chemical master equation already gives that distributional dynamics, but it becomes unwieldy as the number of species or spatial sites grows. The Doi-Peliti formalism rewrites the same stochastic evolution as an operator equation on occupation-number states. That change in language is what makes tensor-network methods and other algebraic tools practical.',
-    ],
-    equations: [
+    id: 'counting',
+    title: 'Why count molecules instead of concentrations',
+    body: [
       {
-        label: 'State vector',
-        latex: String.raw`\left|p(t)\right\rangle = \sum_{\mathbf{n}} p(\mathbf{n}, t)\left|\mathbf{n}\right\rangle`,
+        kind: 'p',
+        text: 'Deterministic chemical kinetics tracks concentrations through coupled ordinary differential equations, a description that is accurate when every species is present in large numbers and its concentration is effectively continuous. That description fails when a species is present in only tens or hundreds of copies, as is common for gene products, intracellular signaling molecules, and reactions confined to small volumes. In this regime the copy number is a discrete integer that changes by a single molecule at each reaction event, and the timing of those events is a random process.',
       },
       {
-        label: 'Master equation',
-        latex: String.raw`\frac{d}{dt}\left|p(t)\right\rangle = \hat{H}\left|p(t)\right\rangle`,
+        kind: 'p',
+        text: 'The appropriate description is then a probability distribution over integer copy numbers. Writing $\\mathbf{n}$ for the vector of copy numbers of each species, $p(\\mathbf{n}, t)$ denotes the probability of configuration $\\mathbf{n}$ at time $t$, and its evolution obeys the chemical master equation[[c:3]], a linear rate equation with one term per reaction. The master equation is readily written but difficult to solve, since the number of accessible configurations grows combinatorially with the number of species and reactions[[c:4]].',
       },
       {
-        label: 'Formal evolution',
-        latex: String.raw`\left|p(t)\right\rangle = e^{t\hat{H}}\left|p(0)\right\rangle`,
+        kind: 'p',
+        text: 'The Doi-Peliti method does not alter the underlying physics. It re-expresses the same master equation in an operator language that exposes its algebraic structure and, in particular, renders it amenable to tensor-network representation.',
       },
     ],
   },
   {
     id: 'operators',
-    title: 'Creation, Annihilation, And Combinatorics',
-    summary: 'Annihilation operators encode how many ways reactants can be chosen, which is why combinatorial factors appear automatically.',
-    paragraphs: [
-      'For one species, the occupation state |n> means there are n molecules present. The annihilation operator removes one molecule and multiplies by n because there are n indistinguishable choices of reactant. The creation operator adds one molecule without an extra counting factor.',
-      'A useful caution is that a dagger here is an algebraic label, not a promise of a quantum-mechanical Hermitian adjoint. Doi-Peliti borrows operator syntax from second quantization, but the state being evolved is a classical probability distribution.',
-    ],
-    equations: [
+    title: 'Reactions as operators',
+    body: [
       {
-        label: 'Operator action',
-        latex: String.raw`a\left|n\right\rangle = n\left|n-1\right\rangle,\qquad a^\dagger\left|n\right\rangle = \left|n+1\right\rangle,\qquad \hat{n}=a^\dagger a`,
+        kind: 'p',
+        text: 'Consider a single species, and let $|n\\rangle$ denote the state containing exactly $n$ molecules. These occupation-number states form a basis, and any probability distribution over copy numbers is a nonnegative linear combination of them. The state of the system is the probability vector expressed in this basis,',
       },
       {
-        label: 'Pair counting',
-        latex: String.raw`\frac{1}{2}a^2\left|n\right\rangle = \frac{n(n-1)}{2}\left|n-2\right\rangle`,
-      },
-    ],
-    bullets: [
-      'For a reaction such as 2X -> products, the factor n(n-1)/2 is not added by hand later; it is already encoded by a^2.',
-      'In practice one often absorbs factorial factors into the stochastic rate constant so the operator form stays compact.',
-    ],
-  },
-  {
-    id: 'reaction-operators',
-    title: 'From Reactions To Generator Terms',
-    summary: 'Each elementary reaction contributes a gain term and a loss term to the generator.',
-    paragraphs: [
-      'Every stochastic reaction changes probability in two ways: it feeds probability into destination states and removes probability from origin states. In operator form those are the gain and loss pieces inside the square brackets. This is exactly the logic your builder is visualizing.',
-      'For pedagogical examples, it is often easiest to remember the pattern first and then specialize. A reaction consumes reactants through annihilation operators, creates products through creation operators, and subtracts the loss term needed for total probability conservation.',
-    ],
-    equations: [
-      {
-        label: 'Unimolecular decay',
-        latex: String.raw`\hat{H}_{A\to \varnothing}=k\left(a-a^\dagger a\right)`,
+        kind: 'eq',
+        latex: String.raw`\left|p(t)\right\rangle = \sum_{\mathbf{n}} p(\mathbf{n}, t)\left|\mathbf{n}\right\rangle .`,
       },
       {
-        label: 'Bimolecular conversion',
-        latex: String.raw`\hat{H}_{2A\to B}=k\left(b^\dagger a^2-a^{\dagger 2}a^2\right)`,
+        kind: 'p',
+        text: 'Two operators connect neighboring basis states. The annihilation operator $a$ removes one molecule and multiplies by $n$, reflecting the $n$ indistinguishable molecules that could be removed. The creation operator $a^{\\dagger}$ adds one molecule and carries no numerical prefactor,',
       },
       {
-        label: 'Schlogl reaction in the paper',
-        latex: String.raw`2X + A \rightleftharpoons 3X,\qquad B \rightleftharpoons X`,
+        kind: 'eq',
+        latex: String.raw`a\left|n\right\rangle = n\left|n-1\right\rangle , \qquad a^\dagger\left|n\right\rangle = \left|n+1\right\rangle , \qquad \hat{n}=a^\dagger a .`,
       },
+      {
+        kind: 'p',
+        text: 'Combinatorial factors therefore arise automatically. A step that consumes two molecules of the same species acquires the factor $n(n-1)$ directly from the operator algebra, with no binomial coefficient introduced by hand,',
+      },
+      {
+        kind: 'eq',
+        latex: String.raw`a^2\left|n\right\rangle = n(n-1)\left|n-2\right\rangle .`,
+      },
+      {
+        kind: 'p',
+        text: 'A caveat on notation is warranted. The dagger is an algebraic label rather than a Hermitian adjoint. The Doi-Peliti construction borrows the symbols of second quantization, but the evolved object is a classical probability distribution, and the inner product of quantum mechanics does not apply.',
+      },
+      {
+        kind: 'p',
+        text: 'The builder below assembles elementary steps and displays each reaction as a balanced equation together with its generated operator term; hovering over an operator reveals the truncated matrix it represents. The preset loads the reversible Schlogl model, a standard test case for stochastic bistability and switching.',
+      },
+      { kind: 'widget', widget: 'builder' },
+      { kind: 'widget', widget: 'liveOperator' },
     ],
   },
   {
-    id: 'paper-connection',
-    title: 'How The 2023 Paper Extends The Idea',
-    summary: 'The paper keeps the operator picture but compresses the huge many-body distribution with tensor networks.',
-    paragraphs: [
-      'Nicholson and Gingrich move from a single well-mixed variable to a one-dimensional chain of diffusing voxels. The state space then grows exponentially, so the central challenge is no longer writing the master equation; it is storing and evolving the full probability distribution.',
-      'Their solution is to represent the probability distribution as a matrix product state and the generator as a matrix product operator, then evolve the compressed state with the time-dependent variational principle. That lets them estimate rare switching rates without choosing a reaction coordinate in advance.',
-    ],
-    equations: [
+    id: 'construction',
+    title: 'How a reaction becomes an operator',
+    body: [
       {
-        label: 'Rare-event rate used in the paper',
-        latex: String.raw`k_{BA}=\left.\frac{d}{dt}\frac{\langle 1|\hat{P}_B e^{t\hat{H}}\hat{P}_A|\pi\rangle}{\langle 1|\hat{P}_A|\pi\rangle}\right|_{t>\tau_{\mathrm{mol}}}`,
+        kind: 'p',
+        text: 'The operator terms generated by the builder follow a fixed structure: each elementary reaction contributes a rate constant multiplying a gain term minus a loss term. The origin of this structure is clearest for the simplest reaction. (The builder denotes the annihilation and creation operators of species $X$ by $x_X$ and $x_X^{\\dagger}$, the species-labeled counterparts of $a$ and $a^{\\dagger}$.) Consider the unimolecular decay $A\\to\\varnothing$ with rate constant $k$,',
       },
       {
-        label: 'MPS ansatz',
-        latex: String.raw`\left|p(t)\right\rangle \approx \sum_{n_1,\ldots,n_L} A^{[1]n_1}A^{[2]n_2}\cdots A^{[L]n_L}\left|n_1,\ldots,n_L\right\rangle`,
+        kind: 'eq',
+        latex: String.raw`\hat{H}_{A\to\varnothing} = k\left(a - a^\dagger a\right) .`,
+      },
+      {
+        kind: 'p',
+        text: 'The gain term $a$ removes one molecule, transferring probability from each state to the state with one fewer molecule. The loss term $a^{\\dagger}a$ is the number operator, with $a^{\\dagger}a\\left|n\\right\\rangle = n\\left|n\\right\\rangle$ counting the molecules available to decay while leaving the configuration unchanged; the minus sign removes the corresponding probability from the originating state. Probability leaves each state at exactly the rate at which it accumulates elsewhere, which is the statement of conservation.',
+      },
+      {
+        kind: 'p',
+        text: 'The bimolecular reaction $2A\\to B$ introduces the essential additional feature,',
+      },
+      {
+        kind: 'eq',
+        latex: String.raw`\hat{H}_{2A\to B} = k\left(b^\dagger a^2 - a^{\dagger 2} a^2\right) .`,
+      },
+      {
+        kind: 'p',
+        text: 'That feature is the pair annihilation $a^2$. Since $a^2\\left|n\\right\\rangle = n(n-1)\\left|n-2\\right\\rangle$, the operator already encodes the number of ordered pairs of reacting molecules. The gain term $b^{\\dagger}a^2$ removes two molecules of $A$ and creates one of $B$, while the loss term $a^{\\dagger 2}a^2$ counts the same pairs and restores them. The combinatorial factor is supplied by the annihilation operators rather than inserted separately.',
+      },
+      {
+        kind: 'p',
+        text: 'The forward Schlogl step, $2X + A \\to 3X$, follows the same construction with additional species. Factoring out the annihilation of the reactants exposes the structure,',
+      },
+      {
+        kind: 'eq',
+        latex: String.raw`\mathbb{W}_{1,f} = \frac{c_1}{2}\left(x_X^{\dagger 3} - x_X^{\dagger 2}\, x_A^{\dagger}\right) x_X^{2}\, x_A .`,
+      },
+      {
+        kind: 'p',
+        text: 'Reading from right to left, the factor $x_X^{2}\\, x_A$ annihilates the reactants and supplies the $\\tfrac{1}{2}n(n-1)$ ordered pairs of identical $X$, with the prefactor $\\tfrac{1}{2}$ correcting for their ordering. The bracketed term then either creates the three product molecules of $X$, which is the gain, or restores the two $X$ and one $A$ that were consumed, which is the loss. Their difference is the net change in configuration, and the minus sign enforces probability conservation. For a general reaction with reactant stoichiometry $\\eta_i$, product stoichiometry $\\mu_i$, and rate constant $k$, the operator is',
+      },
+      {
+        kind: 'eq',
+        latex: String.raw`\hat{H} = k\left(\prod_i \left(a_i^\dagger\right)^{\mu_i} - \prod_i \left(a_i^\dagger\right)^{\eta_i}\right)\prod_i a_i^{\eta_i} .`,
+      },
+      {
+        kind: 'p',
+        text: 'The reverse step follows the same construction applied to the reversed reaction $3X \\to 2X + A$; its operator $\\mathbb{W}_{1,r}$ therefore exchanges the roles of products and reactants and carries a prefactor $c_2/3! = c_2/6$ for the three identical $X$. In the builder, reversing the reaction direction interchanges the two operators, and modifying the stoichiometry updates the operator exponents and combinatorial prefactors accordingly.',
       },
     ],
-    bullets: [
-      'Doi-Peliti gives the local operator structure.',
-      'Tensor networks compress the ensemble over an enormous state space.',
-      'TDVP evolves that compressed ensemble while preserving the probability-flow picture needed for rare-event fluxes.',
+  },
+  {
+    id: 'generator',
+    title: 'Building the generator',
+    body: [
+      {
+        kind: 'p',
+        text: 'A reaction mechanism comprises several elementary reactions, and its generator $\\hat{H}$ is the sum of the operator terms of the individual steps, so the mechanism assembled in the builder corresponds to a single matrix. Because each term is constructed as gain minus loss, the sum conserves total probability, and $\\hat{H}$ is a bona fide generator of a stochastic process.',
+      },
+      {
+        kind: 'p',
+        text: 'This generator specifies the full dynamics. The distribution evolves under a single linear equation whose formal solution is a matrix exponential, so that the entire time evolution is determined by $\\hat{H}$ and the initial condition,',
+      },
+      {
+        kind: 'eq',
+        latex: String.raw`\frac{d}{dt}\left|p(t)\right\rangle = \hat{H}\left|p(t)\right\rangle , \qquad \left|p(t)\right\rangle = e^{t\hat{H}}\left|p(0)\right\rangle .`,
+      },
+      {
+        kind: 'p',
+        text: 'Constructing $\\hat{H}$ is straightforward; the difficulty lies in applying $e^{t\\hat{H}}$, since $\\left|p(t)\\right\\rangle$ carries one entry for every accessible configuration and the dimension of this space grows exponentially with system size. Tensor networks provide a controlled approximation for this evolution, for which the natural first step is a diagrammatic representation of the operators.',
+      },
+    ],
+  },
+  {
+    id: 'diagrams',
+    title: 'Reading the operators as tensor diagrams',
+    body: [
+      {
+        kind: 'p',
+        text: 'Operators constructed from $a$ and $a^{\\dagger}$ are tensors, and tensor diagram notation provides a compact representation of them. In this notation a tensor is drawn as a shaded shape, and each index is a line emanating from it. The number of lines is the order of the tensor, and the number of values an index can take is its dimension; a matrix, for example, is an order-2 tensor with one incoming and one outgoing line.',
+      },
+      { kind: 'widget', widget: 'factorFig' },
+      {
+        kind: 'p',
+        text: 'Connecting two lines denotes a contraction, that is, a summation over the shared index. A line joining two shapes is an internal index of the resulting network, and a line left uncontracted is an external index. The order of the tensor computed by a diagram equals the number of external lines, so a diagram with no uncontracted indices evaluates to a scalar.',
+      },
+      { kind: 'widget', widget: 'contractionFig' },
+      {
+        kind: 'p',
+        text: 'These two rules, shapes with indices and contractions as summations, suffice to represent the operators introduced above and, in the following section, the full state and generator.',
+      },
+    ],
+  },
+  {
+    id: 'networks',
+    title: 'From operators to tensor networks',
+    body: [
+      {
+        kind: 'p',
+        text: 'A single well-mixed species can be treated directly. The tensor-network representation becomes valuable for spatially extended systems, modeled as a chain of small volumes, or voxels, in which molecules react locally and hop between neighboring voxels. Each voxel carries its own occupation number, so a chain of $L$ voxels supports a distribution over $d^{L}$ configurations once the occupation of each voxel is truncated at $d$ values. Storing this distribution explicitly is intractable for all but the shortest chains.',
+      },
+      {
+        kind: 'p',
+        text: 'A Matrix Product State circumvents explicit storage. The distribution is expressed as a chain of factor tensors, one per voxel, each carrying a vertical external index for its local occupation and horizontal internal indices connecting it to its neighbors,',
+      },
+      {
+        kind: 'eq',
+        latex: String.raw`\left|p(t)\right\rangle \approx \sum_{n_1,\ldots,n_L} A^{[1]n_1}A^{[2]n_2}\cdots A^{[L]n_L}\left|n_1,\ldots,n_L\right\rangle .`,
+      },
+      { kind: 'widget', widget: 'mpsFig' },
+      {
+        kind: 'p',
+        text: 'The dimension of these internal bonds, denoted $\\chi$, controls the amount of correlation between voxels that the representation can capture. It is the rank of the factorization across each bipartition of the chain, and increasing it improves accuracy at the cost of memory.',
+      },
+      {
+        kind: 'p',
+        text: 'The generator admits the same structure. Because the Doi-Peliti operators are composed of local reaction and hopping terms, $\\hat{H}$ can be written as a Matrix Product Operator, a chain of factor tensors each carrying an upper and a lower external index.',
+      },
+      { kind: 'widget', widget: 'mpoFig' },
+      {
+        kind: 'p',
+        text: 'Time evolution then proceeds by contracting the operator network with the state network and compressing the result to a prescribed bond dimension[[c:7]]. The controls below compare the number of parameters in the tensor-network representation with the size of the full distribution as the chain length increases.',
+      },
+      { kind: 'widget', widget: 'interactiveChain' },
+    ],
+  },
+  {
+    id: 'rare-events',
+    title: 'Application: rare events on a reaction-diffusion chain',
+    body: [
+      {
+        kind: 'p',
+        text: 'A representative application is the estimation of rare transition rates, such as the switching of a spatially extended bistable system between its two stable states. Direct simulation is inefficient in this setting, because the transition occurs infrequently and the configuration space is too large to enumerate. In the operator formulation the rate is expressed as a ratio of contractions: the distribution is projected onto the initial basin, evolved under the generator, and projected onto the target basin, and the rate is read off from the growth of the projected probability once short-time transients have decayed.',
+      },
+      {
+        kind: 'p',
+        text: 'This procedure has been implemented for a reaction-diffusion chain by representing the distribution as a Matrix Product State and the generator as a Matrix Product Operator, and propagating the compressed state with the time-dependent variational principle[[c:6]]. The compression renders the extended chain tractable, while the operator representation preserves the exact accounting of probability flow, yielding the switching rate without a prescribed reaction coordinate.',
+      },
+      {
+        kind: 'p',
+        text: 'A closely related approach applies the density-matrix renormalization group to survey the rate constants of a well-mixed network, constructing the joint distribution over correlated copy numbers as a tensor network and tracking its variation across parameter space[[c:5]]. The operator construction described here provides precisely the input required by such methods.',
+      },
+      {
+        kind: 'p',
+        text: 'The overall framework is modular: the Doi-Peliti construction supplies the local operator structure, tensor diagram notation makes that structure explicit, and the Matrix Product State and Operator provide the compression that extends the same formulation to systems well beyond the reach of direct enumeration.',
+      },
     ],
   },
 ]
 
-export const FULL_PAPER = {
-  title: 'Second Quantization of Stochastic Chemical Reactions Using the Doi-Peliti Method',
-  intro:
-    'A complete pedagogical companion article for the website, placed alongside the reaction builder so readers can move directly between reaction notation, operator form, and the broader conceptual framework.',
-  sections: [
-    {
-      id: 'full-introduction',
-      title: '1. Introduction: Stochastic Chemical Kinetics and Second Quantization',
-      paragraphs: [
-        'Chemical reactions at small scales, particularly in biological systems, are inherently stochastic. When systems contain tens or hundreds of molecules rather than Avogadro-scale quantities, fluctuations in reaction timing and molecule counts become significant. Such stochastic effects play a central role in cellular biochemistry, gene regulatory networks, and ecological population dynamics.',
-        'Traditional chemical kinetics models use deterministic rate equations, typically expressed as systems of ordinary differential equations. These approaches assume molecular populations are large enough to be treated as continuous variables. While effective for macroscopic systems, deterministic models fail when molecule counts are small and random reaction events dominate system behavior.',
-        'In these regimes, the dynamics are instead described probabilistically using the Chemical Master Equation, which governs the time evolution of the probability distribution over all possible molecular configurations.',
-        'Unfortunately, the Chemical Master Equation rapidly becomes computationally intractable as system size grows, because the number of possible states increases combinatorially.',
-        'The Doi-Peliti formalism provides an elegant alternative representation. It maps the Chemical Master Equation onto a framework closely resembling second-quantized quantum mechanics, in which states are represented in a Fock-space-like vector space and reaction dynamics are encoded in linear operators.',
-        'Although originally developed for reaction-diffusion systems, the Doi-Peliti approach has become an important analytical tool in statistical physics, theoretical chemistry, and computational biology.',
-      ],
-    },
-    {
-      id: 'full-probability-states',
-      title: '2. Probability States and the Evolution Equation',
-      paragraphs: [
-        'Consider a chemical system containing several molecular species. A configuration with $n_A$ molecules of species $A$, $n_B$ molecules of species $B$, and so on is represented by an occupation-number basis vector.',
-        'These vectors span a vector space analogous to a Fock space.',
-        'The full probabilistic state of the system at time $t$ is written as a superposition over all occupation-number states, with coefficient $p(n,t)$ equal to the probability of configuration $n$ at time $t$.',
-        'The probability state evolves according to a linear operator $\\hat{H}$ that encodes all reaction processes.',
-        'Formally, this differential equation has a solution given by the exponential of the generator acting on the initial state.',
-        'The operator exponential represents the accumulated action of reaction processes over time. Expanding the exponential yields a power series in repeated applications of the reaction generator, with each term corresponding to sequences of reaction events occurring over time.',
-        'This compact operator representation allows powerful analytical and numerical techniques to be applied, including perturbative expansions, field-theoretic mappings, and tensor-network simulations.',
-      ],
-      equations: [
-        {
-          label: 'Occupation-number basis',
-          latex: String.raw`\left|n\right\rangle=\left|n_A,n_B,\ldots\right\rangle`,
-        },
-        {
-          label: 'Probability state',
-          latex: String.raw`\left|p(t)\right\rangle=\sum_n p(n,t)\left|n\right\rangle`,
-        },
-        {
-          label: 'Evolution equation',
-          latex: String.raw`\frac{d}{dt}\left|p(t)\right\rangle=\hat{H}\left|p(t)\right\rangle`,
-        },
-        {
-          label: 'Formal solution',
-          latex: String.raw`\left|p(t)\right\rangle=e^{t\hat{H}}\left|p(0)\right\rangle`,
-        },
-        {
-          label: 'Operator exponential',
-          latex: String.raw`e^{t\hat{H}}=\sum_{k=0}^{\infty}\frac{t^k}{k!}\hat{H}^k`,
-        },
-      ],
-    },
-    {
-      id: 'full-creation-annihilation',
-      title: '3. Creation and Annihilation Operators',
-      paragraphs: [
-        'Each molecular species $A$ is associated with two operators: an annihilation operator $a$ and a creation operator $a^\\dagger$.',
-        'Their actions on basis states are defined so that annihilation lowers the occupation by one and multiplies by the current molecule count, while creation raises the occupation by one.',
-        'The coefficient $n_A$ appears because there are $n_A$ indistinguishable molecules that could be removed.',
-        'Thus annihilation operators naturally encode the combinatorial factors appearing in reaction rates.',
-        'Creation operators, by contrast, simply increase the molecule count and therefore do not carry multiplicative coefficients.',
-      ],
-      equations: [
-        {
-          latex: String.raw`a\left|n_A\right\rangle=n_A\left|n_A-1\right\rangle`,
-        },
-        {
-          latex: String.raw`a^\dagger\left|n_A\right\rangle=\left|n_A+1\right\rangle`,
-        },
-      ],
-    },
-    {
-      id: 'full-reaction-operators',
-      title: '4. Constructing Reaction Operators',
-      paragraphs: [
-        'The number operator is defined as $a^\\dagger a$. Its action on a basis state returns the particle number, which makes it useful for computing expectation values of molecule counts.',
-        'Consider first unimolecular decay, $A\\to\\varnothing$, with rate constant $k$. The operator representation contains one term that removes a molecule from the state and a second term that ensures conservation of probability by subtracting the probability flux leaving each state.',
-        'For the bimolecular reaction $2A\\to B$, the operator form removes two molecules of $A$ and creates one molecule of $B$. The normalization term again ensures that total probability remains conserved.',
-      ],
-      equations: [
-        {
-          label: 'Number operator',
-          latex: String.raw`\hat{N}=a^\dagger a`,
-        },
-        {
-          label: 'Number operator action',
-          latex: String.raw`\hat{N}\left|n\right\rangle=n\left|n\right\rangle`,
-        },
-        {
-          label: 'Unimolecular decay',
-          latex: String.raw`\hat{H}_{\mathrm{decay}}=k\left(a-a^\dagger a\right)`,
-        },
-        {
-          label: 'Bimolecular reaction',
-          latex: String.raw`\hat{H}_{2A\to B}=k\left(b^\dagger a^2-a^{\dagger 2}a^2\right)`,
-        },
-      ],
-      bullets: [
-        'The term a^2 removes two molecules of A.',
-        'The term b^\\dagger creates one molecule of B.',
-        'The subtraction term keeps the net probability normalized.',
-      ],
-    },
-    {
-      id: 'full-matrix-representation',
-      title: '5. Matrix Representation of Operators',
-      paragraphs: [
-        'Creation and annihilation operators can also be represented explicitly as infinite-dimensional matrices acting on the occupation-number basis.',
-        'For the annihilation operator, the nonzero entries sit just above the diagonal and increase as 1, 2, 3, and so on. Acting on $|n\\rangle$ therefore reproduces the factor $n|n-1\\rangle$ because there are $n$ ways to choose a molecule to remove.',
-        'For the creation operator, the nonzero entries sit just below the diagonal. Acting on $|n\\rangle$ raises the occupation to $|n+1\\rangle$.',
-        'Unlike ordinary quantum mechanics, $a^\\dagger$ is not necessarily the Hermitian adjoint of $a$ under the inner product used in the Doi-Peliti formalism. Instead, the operators are defined algebraically to reproduce the combinatorics of stochastic chemical reactions.',
-      ],
-      equations: [
-{
-  label: 'Annihilation matrix',
-  latex: String.raw`a=\begin{bmatrix}
-0 & 1 & 0 & 0 & \cdots \\
-0 & 0 & 2 & 0 & \cdots \\
-0 & 0 & 0 & 3 & \cdots \\
-0 & 0 & 0 & 0 & \cdots \\
-\vdots & \vdots & \vdots & \vdots & \ddots
-\end{bmatrix}`,
-},
-{
-  label: 'Creation matrix',
-  latex: String.raw`a^\dagger=\begin{bmatrix}
-0 & 0 & 0 & 0 & \cdots \\
-1 & 0 & 0 & 0 & \cdots \\
-0 & 1 & 0 & 0 & \cdots \\
-0 & 0 & 1 & 0 & \cdots \\
-\vdots & \vdots & \vdots & \vdots & \ddots
-\end{bmatrix}`,
-},,
-        {
-          latex: String.raw`a\left|n\right\rangle=n\left|n-1\right\rangle,\qquad a^\dagger\left|n\right\rangle=\left|n+1\right\rangle`,
-        },
-      ],
-    },
-    {
-      id: 'full-combinatorics',
-      title: '6. Combinatorial Factors in Reaction Rates',
-      paragraphs: [
-        'Reactions involving identical reactants require combinatorial factors.',
-        'For a reaction $2X\\to\\mathrm{products}$, if $n_X$ molecules are present then the number of unordered reactant pairs is the binomial coefficient $\\binom{n_X}{2}$.',
-        'Applying annihilation operators automatically produces these factors, so the combinatorial structure of reaction rates emerges naturally from the operator algebra.',
-        'Often these factors are absorbed into the rate constant $k$ for notational simplicity.',
-      ],
-      equations: [
-        {
-          label: 'Pair count',
-          latex: String.raw`\binom{n_X}{2}=\frac{n_X(n_X-1)}{2}`,
-        },
-        {
-          label: 'Operator action',
-          latex: String.raw`a^2\left|n\right\rangle=n(n-1)\left|n-2\right\rangle`,
-        },
-      ],
-    },
-    {
-      id: 'full-tensor-networks',
-      title: '7. Tensor Network Representations',
-      paragraphs: [
-        'A major advantage of the operator formulation is that it enables tensor-network representations of stochastic systems.',
-        'The probability vector $|p(t)\\rangle$ can be decomposed into a Matrix Product State. In that decomposition each site tensor carries a local occupation-number index, and the full probability distribution is reconstructed by contracting the chain of tensors.',
-        'Similarly, the generator $\\hat{H}$ can be expressed as a Matrix Product Operator.',
-        'This representation enables efficient compression of large state spaces, numerical time evolution using algorithms such as time-evolving block decimation, and variational methods for computing steady states.',
-        'The Doi-Peliti formalism is particularly compatible with tensor networks because reaction generators typically decompose into local interaction terms, precisely the structure required for efficient Matrix Product Operator representations.',
-        'Recent research has applied tensor-network contraction algorithms to stochastic chemical kinetics, enabling simulations of systems far beyond the reach of traditional Chemical Master Equation solvers.',
-      ],
-      equations: [
-        {
-          label: 'Matrix Product State form',
-          latex: String.raw`\left|p(t)\right\rangle=\sum_{n_1,\ldots,n_L} A^{[1]n_1}A^{[2]n_2}\cdots A^{[L]n_L}\left|n_1,\ldots,n_L\right\rangle`,
-        },
-      ],
-      bullets: [
-        'Efficient compression of large state spaces',
-        'Numerical time evolution with tensor-network algorithms',
-        'Variational steady-state computation',
-      ],
-    },
-  ] as FullPaperSection[],
-  references: [
-    'Van Kampen, N. G. Stochastic Processes in Physics and Chemistry. North-Holland (2007).',
-    'Gillespie, D. T. "Exact stochastic simulation of coupled chemical reactions." Journal of Physical Chemistry 81 (1977).',
-    'Doi, M. "Second Quantization Representation for Classical Many-Particle Systems." Journal of Physics A (1976).',
-    'Peliti, L. "Path Integral Approach to Birth-Death Processes on a Lattice." Journal de Physique (1985).',
-    'Schollwock, U. "The Density-Matrix Renormalization Group in the Age of Matrix Product States." Annals of Physics (2011).',
-    'Verstraete, F., Murg, V., and Cirac, J. I. "Matrix Product States and PEPS." Advances in Physics (2008).',
-    'Cui, W. et al. "Tensor-network methods for simulating stochastic chemical kinetics." Journal of Chemical Physics (2022).',
-  ],
-}
+export const REFERENCES: Reference[] = [
+  {
+    n: 1,
+    text: 'M. Doi, "Second Quantization Representation for Classical Many-Particle Systems," Journal of Physics A: Mathematical and General 9, 1465 (1976).',
+    href: 'https://doi.org/10.1088/0305-4470/9/9/008',
+    hrefLabel: 'doi:10.1088/0305-4470/9/9/008',
+  },
+  {
+    n: 2,
+    text: 'L. Peliti, "Path Integral Approach to Birth-Death Processes on a Lattice," Journal de Physique 46, 1469 (1985).',
+    href: 'https://doi.org/10.1051/jphys:019850046090146900',
+    hrefLabel: 'doi:10.1051/jphys:019850046090146900',
+  },
+  {
+    n: 3,
+    text: 'N. G. van Kampen, Stochastic Processes in Physics and Chemistry, 3rd ed. (North-Holland, 2007).',
+  },
+  {
+    n: 4,
+    text: 'D. T. Gillespie, "Exact Stochastic Simulation of Coupled Chemical Reactions," Journal of Physical Chemistry 81, 2340 (1977).',
+    href: 'https://doi.org/10.1021/j100540a008',
+    hrefLabel: 'doi:10.1021/j100540a008',
+  },
+  {
+    n: 5,
+    text: 'J. P. Zima, S. B. Nicholson, and T. R. Gingrich, "Chemical master equation parameter exploration using DMRG," Journal of Chemical Physics 163, 054118 (2025).',
+    href: 'https://arxiv.org/abs/2501.09692',
+    hrefLabel: 'arXiv:2501.09692',
+  },
+  {
+    n: 6,
+    text: 'S. B. Nicholson and T. R. Gingrich, "Quantifying Rare Events in Stochastic Reaction-Diffusion Dynamics Using Tensor Networks," Physical Review X 13, 041006 (2023).',
+    href: 'https://doi.org/10.1103/PhysRevX.13.041006',
+    hrefLabel: 'doi:10.1103/PhysRevX.13.041006',
+  },
+  {
+    n: 7,
+    text: 'U. Schollwock, "The Density-Matrix Renormalization Group in the Age of Matrix Product States," Annals of Physics 326, 96 (2011).',
+    href: 'https://doi.org/10.1016/j.aop.2010.09.012',
+    hrefLabel: 'doi:10.1016/j.aop.2010.09.012',
+  },
+]

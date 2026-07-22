@@ -233,27 +233,30 @@ const stepToKaTeX = (step: ParsedStep, context: 'preview' | 'visualization' = 'p
         // return n === 1 ? sym : `${sym}^{${n}}`;
     }
 
+    const OP_SPACE = " \\, " // thin space between operators so they do not crowd together
+
     const gain =
         step.products.map((species) =>
             format(species.name, species.coeff, true)
         )
             .filter(Boolean)
-            .join(" ") + " " +
+            .join(OP_SPACE) + OP_SPACE +
         step.reactants
             .map((species) =>
                 format(species.name, species.coeff, false)
             )
             .filter(Boolean)
-            .join(" ");
+            .join(OP_SPACE);
 
 
     const loss = step.reactants
         .map((species) =>
             format(species.name, species.coeff, true) +
+            OP_SPACE +
             format(species.name, species.coeff, false)
         )
         .filter(Boolean)
-        .join(" ")
+        .join(OP_SPACE)
 
     // const loss = species
     //         .map((s, i) =>

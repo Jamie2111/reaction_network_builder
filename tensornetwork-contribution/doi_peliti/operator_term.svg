@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 410 150" width="410" height="150" font-family="Georgia, 'Times New Roman', serif">
+  <!-- species occupation lines (external indices, occupation in / occupation out) -->
+  <line x1="40" y1="48" x2="380" y2="48" stroke="#000000" stroke-width="2"/>
+  <line x1="40" y1="110" x2="380" y2="110" stroke="#000000" stroke-width="2"/>
+  <text x="30" y="52" font-size="14" font-style="italic" fill="#000000" text-anchor="end">X</text>
+  <text x="30" y="114" font-size="14" font-style="italic" fill="#000000" text-anchor="end">A</text>
+
+  <!-- X row: annihilation a^2 (open) then creation a-dagger^3 (blue) -->
+  <rect x="170" y="32" width="32" height="32" rx="3" fill="#ffffff" stroke="#000000" stroke-width="2.2"/>
+  <text x="186" y="53" font-size="14" font-style="italic" fill="#000000" text-anchor="middle">a</text>
+  <text x="196" y="44" font-size="10" fill="#000000" text-anchor="middle">2</text>
+  <rect x="226" y="32" width="32" height="32" rx="3" fill="#87a2d5" stroke="#000000" stroke-width="2.2"/>
+  <text x="240" y="53" font-size="14" font-style="italic" fill="#000000" text-anchor="middle">a&#8224;</text>
+  <text x="252" y="44" font-size="10" fill="#000000" text-anchor="middle">3</text>
+
+  <!-- A row: annihilation a (open) -->
+  <rect x="198" y="94" width="32" height="32" rx="3" fill="#ffffff" stroke="#000000" stroke-width="2.2"/>
+  <text x="214" y="115" font-size="14" font-style="italic" fill="#000000" text-anchor="middle">a</text>
+</svg>

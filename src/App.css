@@ -1,524 +1,59 @@
-/* Reset and Base Styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/*
+ * Additions layered on top of the TensorNetwork.org stylesheets
+ * (normalize.css, skeleton.css, style.css, imported first in main.tsx).
+ * Only the interactive builder and the tensor diagrams need custom rules;
+ * all page chrome, typography, links, and the table of contents come from
+ * the site's own CSS so the page matches it exactly.
+ */
+
+:root {
+  --maroon: #872518;
+  --maroon-dark: #6b1d12;
+  --maroon-tint: #f2ddd8;
+  --box: #eeeeee;
+  --line: #d8d8d8;
+
+  /* Tensor diagram palette, sampled from the TensorNetwork.org figures */
+  --td-fill: #87a2d5;
+  --td-stroke: #000000;
+  --td-label: #000000;
 }
 
 body {
-  font-family: 'Times New Roman', serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background: #ffffff;
-  height: 100vh;
-  color: #000000;
-  overflow: hidden;
+  background-color: #fff;
 }
 
-.app {
-  height: 100vh;
-  padding: 1rem;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-/* Header Styles */
-.header {
-  text-align: center;
-  margin-bottom: 0.5rem;
-  color: #000000;
-  flex-shrink: 0;
-}
-
-.title {
-  font-size: 1.75rem;
-  font-weight: 400;
-  margin-bottom: 0.125rem;
-  color: #000000;
-  font-family: 'Times New Roman', serif;
-}
-
-.subtitle {
-  font-size: 1rem;
-  color: #333333;
-  font-weight: 400;
-  font-family: 'Times New Roman', serif;
-}
-
-/* Main Content Layout */
-.main-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  align-items: start;
-  flex: 1;
-  overflow: hidden;
-  min-height: 0;
-}
-
-@media (max-width: 1024px) {
-  .main-content {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Step Builder */
-.step-builder {
-  background: white;
-  border-radius: 0;
-  padding: 1.5rem;
-  box-shadow: none;
-  border: 2px solid #000000;
-  overflow-y: auto;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.form-title {
-  font-size: 1.5rem;
-  font-weight: 400;
-  margin-bottom: 1rem;
-  color: #000000;
-  border-bottom: 1px solid #000000;
-  padding-bottom: 0.5rem;
-  font-family: 'Times New Roman', serif;
-  flex-shrink: 0;
-}
-
-.paper-tools {
-  background: #ffffff;
-  border: 1px solid #000000;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  flex-shrink: 0;
-}
-
-.paper-tools-header {
-  margin-bottom: 0.75rem;
-}
-
-.paper-tools-title {
-  font-size: 1rem;
-  font-weight: 400;
-  color: #000000;
-  margin-bottom: 0.35rem;
-  font-family: 'Times New Roman', serif;
-}
-
-.paper-tools-copy {
-  font-size: 0.95rem;
-  line-height: 1.45;
-  color: #333333;
-  font-family: 'Times New Roman', serif;
-}
-
-.paper-tools-actions {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.secondary-btn {
-  background: #000000;
-  color: #ffffff;
-  border: 2px solid #000000;
-  border-radius: 0;
-  padding: 0.7rem 1rem;
-  font-size: 0.95rem;
-  font-family: 'Times New Roman', serif;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.secondary-btn:hover {
-  background: #333333;
-  border-color: #333333;
-}
-
-.secondary-btn-light {
-  background: #ffffff;
-  color: #000000;
-}
-
-.secondary-btn-light:hover {
-  background: #f3f3f3;
-  color: #000000;
-  border-color: #000000;
-}
-
-/* Reaction Builder */
-.reaction-builder {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: 1.5rem;
-  align-items: center;
-  margin-bottom: 1rem;
-  padding: 1.5rem;
-  background: #ffffff;
-  border-radius: 0;
-  border: 1px solid #000000;
-  flex-shrink: 0;
-}
-
-@media (max-width: 768px) {
-  .reaction-builder {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    text-align: center;
-  }
-}
-
-.reactants-section,
-.products-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.species-input {
-  width: 100%;
-  padding: 1rem 1.25rem;
-  border: 2px solid #000000;
-  border-radius: 0;
-  font-size: 1.125rem;
-  font-family: 'Times New Roman', serif;
-  resize: none;
-  background: white;
-  transition: border-color 0.2s ease;
-  height: 80px;
-  line-height: 1.4;
-  color: #000000;
-}
-
-.species-input:focus {
-  outline: none;
-  border-color: #000000;
-  border-width: 3px;
-}
-
-.species-input::placeholder {
-  color: #666666;
-}
-
-/* Arrow Section - Fixed Layout */
-.arrow-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-.rate-input-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-.rate-above {
-  margin-bottom: 0;
-}
-
-.rate-below {
-  margin-top: 0;
-}
-
-.rate-input-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.1rem;
-  height: 30px;
-  justify-content: center;
-}
-
-.rate-input-placeholder {
-  height: 30px;
-  width: 80px;
-  background: transparent;
-  border: none;
-}
-
-.rate-label {
-  font-size: 0.75rem;
-  font-weight: 400;
-  color: #333333;
-  font-family: 'Times New Roman', serif;
-  position: absolute;
-  margin-top: 2px;
-}
-
-/* Position labels outside the input */
-.rate-above .rate-label {
-  top: -18px;
-}
-
-.rate-below .rate-label {
-  bottom: -18px;
-}
-
-.rate-input {
-  width: 80px;
-  padding: 0.25rem 0.5rem;
-  border: 2px solid #000000;
-  border-radius: 0;
-  text-align: center;
-  font-size: 0.75rem;
-  font-weight: 400;
-  background: white;
-  transition: border-color 0.2s ease;
-  font-family: 'Times New Roman', serif;
-  color: #000000;
-  height: 30px;
-  position: relative;
-}
-
-.rate-above .rate-input {
-  border-bottom: none;
-}
-
-.rate-below .rate-input {
-  border-top: none;
-}
-
-.rate-input:focus {
-  outline: none;
-  border-color: #000000;
-  border-width: 3px;
-}
-
-.arrow-button {
-  width: 80px;
-  height: 80px;
-  border: 2px solid #000000;
-  border-radius: 0;
-  background: white;
-  color: #000000;
-  font-size: 2rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: none;
-  font-family: 'Times New Roman', serif;
-  position: relative;
-  flex-shrink: 0;
-}
-
-.arrow-button-container .arrow-button {
-  border-top: 2px solid #000000;
-  border-bottom: 2px solid #000000;
-}
-
-/* Remove borders when there are actual rate inputs */
-.arrow-button-container.has-top-input .arrow-button {
-  border-top: none;
-}
-
-.arrow-button-container.has-bottom-input .arrow-button {
-  border-bottom: none;
-}
-
-.arrow-button:hover {
-  background: #f0f0f0;
-  color: #000000;
-}
-
-.arrow-button:active {
-  background: #e0e0e0;
-  color: #000000;
-}
-
-.reaction-type-label {
-  font-size: 0.75rem;
-  font-weight: 400;
-  color: #333333;
-  text-transform: lowercase;
-  letter-spacing: 0.02em;
-  text-align: center;
-  margin-top: 0.5rem;
-  font-family: 'Times New Roman', serif;
-  height: 20px;
-}
-
-/* Equation Preview */
-.equation-preview {
-  background: #ffffff;
-  border: 1px solid #000000;
-  border-radius: 0;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  min-height: 80px;
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-}
-
-.preview-title {
-  font-size: 1rem;
-  font-weight: 400;
-  color: #000000;
-  margin-bottom: 0.5rem;
-  font-family: 'Times New Roman', serif;
-}
-
-.preview-equation {
-  font-family: 'Times New Roman', serif;
-  font-size: 1.5rem;
-  font-weight: 400;
-  color: #000000;
-  margin-bottom: 0;
-  text-align: center;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Display equations: plain and centered, flowing inline with the prose (no box) */
+.tn-eq {
+  margin: 1.5rem 0;
+  padding-bottom: 4px; /* invisible room so subscript descenders are not clipped */
   overflow-x: auto;
   overflow-y: hidden;
 }
 
-.preview-equation::-webkit-scrollbar {
-  height: 4px;
+.tn-eq > span {
+  display: block;
 }
 
-.preview-equation::-webkit-scrollbar-track {
-  background: transparent;
+/*
+ * KaTeX's .katex-display defaults to overflow-x:auto (from the site's style.css),
+ * which makes the browser compute overflow-y to auto and show a spurious vertical
+ * scrollbar. Let the surrounding box own the (horizontal) scroll instead.
+ */
+.tn-eq .katex-display,
+.builder-panel .katex-display {
+  overflow: visible;
+  margin: 0;
 }
 
-.preview-equation::-webkit-scrollbar-thumb {
-  background: #d0d0d0;
-  border-radius: 2px;
+.inline-latex {
+  display: inline-flex;
+  align-items: baseline;
+  white-space: nowrap;
 }
 
-.preview-equation::-webkit-scrollbar-thumb:hover {
-  background: #a0a0a0;
-}
-
-/* Second-Quantized Input */
-.second-quantized-input {
-  margin-bottom: 1.25rem;
-}
-
-.form-subtitle {
-  font-size: 1rem;
-  font-weight: 400;
-  color: #000000;
-  margin-bottom: 0.5rem;
-  font-family: 'Times New Roman', serif;
-}
-
-.second-quantized-textarea {
-  width: 100%;
-  min-height: 80px;
-  padding: 0.75rem;
-  border: 1px solid #000000;
-  border-radius: 0;
-  background: #ffffff;
-  color: #000000;
-  font-family: 'Times New Roman', serif;
-  font-size: 1rem;
-  line-height: 1.4;
-  resize: vertical;
-  transition: border-color 0.2s ease;
-}
-
-.second-quantized-textarea:focus {
-  outline: none;
-  border-color: #000000;
-  box-shadow: 0 0 0 1px #000000;
-}
-
-.second-quantized-textarea::placeholder {
-  color: #666666;
-  font-style: italic;
-}
-
-.rate-display {
-  font-size: 0.9rem;
-  color: #333333;
-  text-align: center;
-  font-family: 'Times New Roman', serif;
-}
-
-/* Equilibrium Forms Styling */
-.equilibrium-forms {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 0;
-  align-items: center;
-  text-align: center;
-  width: 100%;
-}
-
-.equilibrium-scroll-container {
-  width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-}
-
-.equilibrium-scroll-container::-webkit-scrollbar {
-  height: 4px;
-}
-
-.equilibrium-scroll-container::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.equilibrium-scroll-container::-webkit-scrollbar-thumb {
-  background: #d0d0d0;
-  border-radius: 2px;
-}
-
-.equilibrium-scroll-container::-webkit-scrollbar-thumb:hover {
-  background: #a0a0a0;
-}
-
-.equilibrium-form {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.25rem 0;
-  justify-content: center;
-  width: 100%;
-  position: relative;
-  min-width: max-content;
-}
-
-.equilibrium-form:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  bottom: -0.25rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60%;
-  height: 1px;
-  background-color: #d8d8d8;
-}
-
-.form-label {
-  font-size: 0.9rem;
-  color: #444444;
-  font-weight: 500;
-  min-width: 65px;
-  flex-shrink: 0;
-  font-family: 'Times New Roman', serif;
-  text-align: left;
-  letter-spacing: 0.01em;
+.inline-latex .katex {
+  font-size: 1em;
 }
 
 .latex-equation {
@@ -526,604 +61,602 @@ body {
   white-space: nowrap;
 }
 
-.equilibrium-form .latex-equation {
-  flex-shrink: 0;
+/* =====================================================================
+ * Interactive reaction builder
+ * All rules scoped under .builder-panel so they reliably override the
+ * generic input/button/heading rules in skeleton.css.
+ * ===================================================================== */
+
+.builder-panel {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fbfafa;
+  padding: 1.5rem;
+  margin: 1.6rem 0;
 }
 
-.latex-equation,
-.latex-rate,
-.latex-label {
-  color: #000000;
-}
-
-.katex {
-  color: #000000 !important;
-  font-size: inherit !important;
-}
-
-.katex .base {
-  color: #000000 !important;
-}
-
-.katex .mord,
-.katex .mbin,
-.katex .mrel,
-.katex .mopen,
-.katex .mclose,
-.katex .mpunct,
-.katex .minner {
-  color: #000000;
-}
-
-.add-step-btn {
-  width: 100%;
-  background: #000000;
-  color: white;
-  border: 2px solid #000000;
-  border-radius: 0;
-  padding: 1rem 2rem;
-  font-size: 1rem;
-  font-weight: 400;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: 'Times New Roman', serif;
-  letter-spacing: 0.02em;
-  margin-top: auto;
-  flex-shrink: 0;
-}
-
-.add-step-btn:hover:not(:disabled) {
-  background: #333333;
-  border-color: #333333;
-}
-
-.add-step-btn:active:not(:disabled) {
-  background: #666666;
-  border-color: #666666;
-}
-
-.add-step-btn:disabled {
-  background: #cccccc;
-  color: #666666;
-  border-color: #cccccc;
-  cursor: not-allowed;
-}
-
-/* Steps List */
-.steps-list {
-  background: white;
-  border-radius: 0;
-  padding: 2rem;
-  box-shadow: none;
-  border: 2px solid #000000;
-  height: 100%;
-  overflow-y: auto;
+.builder-grid {
   display: flex;
-  flex-direction: column;
+  gap: 2%;
+  align-items: flex-start;
 }
 
-.empty-state {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: #333333;
+.builder-grid > * {
+  flex: 1 1 0;
+  min-width: 0; /* let equation panels shrink and scroll instead of overflowing */
 }
 
-.empty-state p {
-  font-size: 1rem;
-  line-height: 1.6;
-  margin-bottom: 0.5rem;
-  font-family: 'Times New Roman', serif;
+/* Stack at the same breakpoint skeleton uses for its columns */
+@media (max-width: 549px) {
+  .builder-grid {
+    flex-direction: column;
+    align-items: stretch; /* fill the narrow column instead of sizing to content */
+  }
 }
 
-.steps-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.step-card {
+.builder-panel .step-builder,
+.builder-panel .steps-list {
   background: #ffffff;
-  border: 1px solid #000000;
-  border-radius: 0;
-  padding: 1rem;
-  transition: all 0.2s ease;
-  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 1.1rem;
 }
 
-.step-card:hover {
-  border-color: #333333;
-  box-shadow: inset 0 0 0 1px #333333;
-}
-
-.step-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.75rem;
-}
-
-.step-number {
-  font-size: 0.875rem;
+.builder-panel .form-title {
+  font-size: 1.4rem;
   font-weight: 400;
-  color: #000000;
-  background: #f0f0f0;
-  padding: 0.25rem 0.75rem;
-  border: 1px solid #000000;
-  font-family: 'Times New Roman', serif;
+  margin: 0 0 0.9rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--line);
+  letter-spacing: normal;
 }
 
-.delete-btn {
-  background: #000000;
-  color: white;
-  border: 2px solid #000000;
-  border-radius: 0;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 1.25rem;
-  line-height: 1;
-  transition: all 0.2s ease;
-}
-
-.delete-btn:hover {
-  background: #333333;
-  border-color: #333333;
-}
-
-.step-equation {
-  font-family: 'Times New Roman', serif;
-  font-size: 1.375rem;
-  font-weight: 400;
-  color: #000000;
-  background: white;
-  padding: 0.75rem;
-  border: 1px solid #000000;
-  margin-bottom: 0.75rem;
-  text-align: center;
-  overflow-x: auto;
-  overflow-y: hidden;
-}
-
-.step-equation::-webkit-scrollbar {
-  height: 4px;
-}
-
-.step-equation::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.step-equation::-webkit-scrollbar-thumb {
-  background: #d0d0d0;
-  border-radius: 2px;
-}
-
-.step-equation::-webkit-scrollbar-thumb:hover {
-  background: #a0a0a0;
-}
-
-.step-second-quantized {
-  font-family: 'Times New Roman', serif;
-  font-size: 1.5rem;
-  font-weight: 400;
-  color: #000000;
-  background: #f8f8f8;
-  padding: 0.75rem;
-  border: 1px solid #000000;
-  margin-bottom: 0.75rem;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 60px;
-  overflow-x: auto;
-  overflow-y: hidden;
-}
-
-.step-second-quantized::-webkit-scrollbar {
-  height: 4px;
-}
-
-.step-second-quantized::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.step-second-quantized::-webkit-scrollbar-thumb {
-  background: #d0d0d0;
-  border-radius: 2px;
-}
-
-.step-second-quantized::-webkit-scrollbar-thumb:hover {
-  background: #a0a0a0;
-}
-
-.step-rates {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
+.builder-panel .paper-tools {
+  background: var(--box);
+  border-radius: 8px;
+  padding: 0.9rem;
   margin-bottom: 1rem;
 }
 
-.rate-constant {
-  background: #000000;
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border: 1px solid #000000;
-  font-size: 0.825rem;
-  font-weight: 400;
-  font-family: 'Times New Roman', serif;
-}
-
-.step-type-badge {
-  text-align: center;
-  font-size: 0.75rem;
-  font-weight: 400;
-  color: #333333;
-  text-transform: lowercase;
-  letter-spacing: 0.02em;
-  font-family: 'Times New Roman', serif;
-}
-
-.arrow-button-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-}
-
-.steps-list::-webkit-scrollbar {
-  width: 6px;
-}
-
-.steps-list::-webkit-scrollbar-track {
-  background: #f0f0f0;
-  border: 1px solid #cccccc;
-}
-
-.steps-list::-webkit-scrollbar-thumb {
-  background: #666666;
-  border: 1px solid #333333;
-}
-
-.steps-list::-webkit-scrollbar-thumb:hover {
-  background: #333333;
-}
-
-.matrix-tooltip {
-  background: white;
-  border: none;
-  border-radius: 0;
-  padding: 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  width: 120px;
-  height: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.matrix-tooltip-content {
-  font-size: 1.2rem !important;
-  color: #000000 !important;
-  width: 100%;
-  height: 100%;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.matrix-tooltip-content .katex {
-  font-size: 1.2rem !important;
-  width: 100% !important;
-  height: 100% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.matrix-tooltip-content .katex-display {
-  margin: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.matrix-tooltip-content .katex .base {
-  width: 100% !important;
-  height: 100% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.matrix-tooltip-content .katex .delimsizing {
-  font-size: 1.5rem !important;
-  font-weight: bold !important;
-}
-
-.paper-companion {
-  border-top: 1px solid #000000;
-  padding-top: 1.5rem;
-  margin-top: auto;
-}
-
-.paper-companion-header {
-  margin-bottom: 1rem;
-}
-
-.paper-companion-title {
-  margin-bottom: 0.75rem;
-}
-
-.paper-meta-card {
-  border: 1px solid #000000;
-  padding: 1rem;
-  background: #f8f8f8;
-}
-
-.paper-meta-title {
-  font-size: 1rem;
+.builder-panel .paper-tools-copy {
+  font-size: 1.3rem;
   line-height: 1.45;
-  margin-bottom: 0.5rem;
-  color: #000000;
-  font-family: 'Times New Roman', serif;
+  margin: 0 0 0.7rem;
 }
 
-.paper-meta-line {
-  font-size: 0.925rem;
-  line-height: 1.5;
-  color: #333333;
-  font-family: 'Times New Roman', serif;
-}
-
-.paper-panels {
+.builder-panel .paper-tools-actions {
   display: flex;
-  flex-direction: column;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.builder-panel .secondary-btn {
+  height: auto;
+  background: var(--maroon);
+  color: #ffffff;
+  border: 1px solid var(--maroon);
+  border-radius: 6px;
+  padding: 0.55rem 0.9rem;
+  font-size: 1.2rem;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  line-height: 1.3;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.builder-panel .secondary-btn:hover {
+  background: var(--maroon-dark);
+  border-color: var(--maroon-dark);
+  color: #ffffff;
+}
+
+.builder-panel .secondary-btn-light {
+  background: #ffffff;
+  color: var(--maroon);
+}
+
+.builder-panel .secondary-btn-light:hover {
+  background: var(--maroon-tint);
+  color: var(--maroon-dark);
+  border-color: var(--maroon);
+}
+
+.builder-panel .reaction-builder {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   gap: 0.9rem;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
-.pedagogy-panel {
-  border: 1px solid #000000;
+.builder-panel .reactants-section,
+.builder-panel .products-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+
+.builder-panel textarea.species-input {
+  width: 100%;
+  padding: 0 0.8rem;
+  border: 1px solid #bbbbbb;
+  border-radius: 6px;
+  font-size: 1.8rem;
+  resize: none;
   background: #ffffff;
+  height: 64px;
+  line-height: 62px; /* vertically center a single line in the 64px box */
+  text-align: center;
+  margin-bottom: 0;
+  overflow: hidden;
 }
 
-.pedagogy-summary {
+.builder-panel textarea.species-input:focus {
+  border: 1px solid var(--maroon);
+}
+
+.builder-panel .arrow-section {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  list-style: none;
-  padding: 1rem;
-  cursor: pointer;
+  align-items: center;
+  justify-content: center;
 }
 
-.pedagogy-summary::-webkit-details-marker {
-  display: none;
-}
-
-.pedagogy-title {
-  font-size: 1rem;
-  font-weight: 400;
-  color: #000000;
-  font-family: 'Times New Roman', serif;
-}
-
-.pedagogy-tagline {
-  font-size: 0.92rem;
-  line-height: 1.45;
-  color: #444444;
-  font-family: 'Times New Roman', serif;
-}
-
-.pedagogy-content {
-  border-top: 1px solid #000000;
-  padding: 1rem;
-}
-
-.full-paper-content {
+.builder-panel .arrow-button-container {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  align-items: center;
+  justify-content: center;
 }
 
-.full-paper-section {
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #d8d8d8;
+.builder-panel .rate-input-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.full-paper-section:last-child {
+.builder-panel .rate-input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 28px;
+  justify-content: center;
+}
+
+.builder-panel .rate-input-placeholder {
+  height: 28px;
+  width: 64px;
+}
+
+.builder-panel input.rate-input {
+  width: 64px;
+  height: 28px;
+  padding: 0.2rem 0.4rem;
+  border: 1px solid #bbbbbb;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 1.1rem;
+  background: #ffffff;
+  margin-bottom: 0;
+}
+
+.builder-panel .rate-above input.rate-input {
   border-bottom: none;
-  padding-bottom: 0;
+  border-radius: 5px 5px 0 0;
 }
 
-.full-paper-section-title {
-  font-size: 1.05rem;
-  font-weight: 400;
-  color: #000000;
-  margin-bottom: 0.8rem;
-  font-family: 'Times New Roman', serif;
+.builder-panel .rate-below input.rate-input {
+  border-top: none;
+  border-radius: 0 0 5px 5px;
 }
 
-.pedagogy-paragraph {
-  font-size: 0.97rem;
-  line-height: 1.6;
-  color: #222222;
-  margin-bottom: 0.85rem;
-  font-family: 'Times New Roman', serif;
+.builder-panel input.rate-input:focus {
+  border: 1px solid var(--maroon);
 }
 
-.inline-latex {
-  display: inline-flex;
-  align-items: baseline;
-  margin: 0 0.08rem;
-  white-space: nowrap;
+.builder-panel .arrow-button {
+  width: 64px;
+  height: 64px;
+  border: 1px solid #bbbbbb;
+  border-radius: 6px;
+  background: #ffffff;
+  color: var(--maroon);
+  font-size: 2.2rem;
+  padding: 0;
+  margin-bottom: 0; /* cancel skeleton's button margin so the rate boxes stay flush */
+  text-transform: none;
+  letter-spacing: normal;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease;
 }
 
-.inline-latex .katex {
-  font-size: 1em !important;
+.builder-panel .arrow-button-container.has-top-input .arrow-button {
+  border-top: none;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 
-.pedagogy-equation {
+.builder-panel .arrow-button-container.has-bottom-input .arrow-button {
+  border-bottom: none;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.builder-panel .arrow-button:hover {
+  background: var(--maroon-tint);
+  color: var(--maroon);
+  border-color: #bbbbbb;
+}
+
+.builder-panel .equation-preview {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.8rem;
   margin-bottom: 0.9rem;
 }
 
-.pedagogy-equation-label {
-  font-size: 0.88rem;
-  color: #333333;
-  margin-bottom: 0.35rem;
-  font-family: 'Times New Roman', serif;
+.builder-panel .preview-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #555555;
+  margin: 0 0 0.5rem;
 }
 
-.pedagogy-equation-box {
-  border: 1px solid #000000;
-  background: #ffffff;
-  padding: 0.85rem;
+.builder-panel .preview-equation {
+  font-size: 1.8rem;
+  text-align: center;
+  display: block;
+  min-height: 44px;
+  padding: 0.35rem 0 0.6rem; /* bottom room so subscript descenders are not clipped */
   overflow-x: auto;
   overflow-y: hidden;
 }
 
-.pedagogy-equation-box::-webkit-scrollbar {
-  height: 4px;
+.builder-panel .add-step-btn {
+  width: 100%;
+  height: auto;
+  background: var(--maroon);
+  color: #ffffff;
+  border: 1px solid var(--maroon);
+  border-radius: 6px;
+  padding: 0.8rem 1.2rem;
+  font-size: 1.4rem;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
 }
 
-.pedagogy-equation-box::-webkit-scrollbar-track {
+.builder-panel .add-step-btn:hover:not(:disabled) {
+  background: var(--maroon-dark);
+  color: #ffffff;
+}
+
+.builder-panel .add-step-btn:disabled {
+  background: #d6d2d0;
+  color: #ffffff;
+  border-color: #d6d2d0;
+  cursor: not-allowed;
+}
+
+.builder-panel .empty-state {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #555555;
+}
+
+.builder-panel .empty-state p {
+  margin: 0 0 0.5rem;
+  font-size: 1.3rem;
+}
+
+.builder-panel .steps-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.builder-panel .step-card {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.8rem;
+}
+
+.builder-panel .step-card:hover {
+  border-color: var(--maroon);
+}
+
+.builder-panel .step-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+
+.builder-panel .step-number {
+  font-size: 1.1rem;
+  color: var(--maroon);
+  background: var(--maroon-tint);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+}
+
+.builder-panel .delete-btn {
+  height: auto;
   background: transparent;
+  color: #555555;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.4rem;
+  line-height: 1;
+  transition: all 0.15s ease;
 }
 
-.pedagogy-equation-box::-webkit-scrollbar-thumb {
-  background: #d0d0d0;
-  border-radius: 2px;
+.builder-panel .delete-btn:hover {
+  background: var(--maroon);
+  color: #ffffff;
+  border-color: var(--maroon);
 }
 
-.pedagogy-list {
-  padding-left: 1.25rem;
-  color: #222222;
-  font-family: 'Times New Roman', serif;
+.builder-panel .step-equation,
+.builder-panel .step-second-quantized {
+  background: #fcfbfa;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 0.6rem;
+  margin-bottom: 0.6rem;
+  text-align: center;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
-.pedagogy-list li {
-  font-size: 0.95rem;
-  line-height: 1.55;
-  margin-bottom: 0.5rem;
+.builder-panel .step-second-quantized {
+  display: block;
+  min-height: 52px;
 }
 
-.full-paper-references {
-  padding-left: 1.25rem;
-  color: #222222;
-  font-family: 'Times New Roman', serif;
+.builder-panel .equilibrium-forms {
+  display: block;
+  width: 100%;
 }
 
-.full-paper-references li {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  margin-bottom: 0.55rem;
+.builder-panel .equilibrium-scroll-container {
+  width: 100%;
+  /* the parent (.step-second-quantized / .preview-equation) owns horizontal scroll;
+     keep this visible so equation descenders are never clipped */
+  overflow: visible;
 }
 
-/* Clickable element styling */
+.builder-panel .equilibrium-form {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  justify-content: center;
+  min-width: max-content;
+  padding: 0.9rem 0;
+}
+
+.builder-panel .form-label {
+  font-size: 1.2rem;
+  color: #555555;
+  min-width: 58px;
+  flex-shrink: 0;
+  text-align: left;
+}
+
+/* Hoverable operator helper (used inside the operator form) */
 .clickable {
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.15s ease;
   padding: 1px 2px;
   border-radius: 2px;
 }
 
 .clickable:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: var(--maroon-tint);
 }
 
-@media (max-width: 768px) {
-  .app {
-    padding: 1rem 0.5rem;
-  }
+.matrix-tooltip {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+}
 
-  .title {
-    font-size: 2rem;
-  }
+.matrix-tooltip-content {
+  font-size: 1.6rem;
+  color: #222222;
+}
 
-  .subtitle {
-    font-size: 1rem;
-  }
+.matrix-tooltip-content .katex-display {
+  margin: 0 !important;
+}
 
-  .step-builder,
-  .steps-list {
-    padding: 1.5rem;
-  }
+/* =====================================================================
+ * Tensor diagrams, matched to the TensorNetwork.org figures
+ * ===================================================================== */
 
-  .paper-tools-actions {
-    flex-direction: column;
-  }
+.td-figure {
+  margin: 1.6rem auto;
+  text-align: center;
+}
 
-  .reaction-builder {
-    padding: 1.5rem;
-  }
+.td-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto 0.8rem;
+}
 
-  .arrow-button {
-    width: 60px;
-    height: 60px;
-    font-size: 1.5rem;
-  }
+.td-caption {
+  font-size: 1.45rem;
+  color: #555555;
+  line-height: 1.55;
+  max-width: 620px;
+  margin: 0 auto;
+}
 
-  .rate-input {
-    width: 60px;
-  }
+.td-caption b {
+  color: #222222;
+  font-weight: 600;
+}
 
-  .step-rates {
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
+.td-tensor {
+  fill: var(--td-fill);
+  stroke: var(--td-stroke);
+  stroke-width: 2.2;
+}
+
+.td-tensor-label {
+  fill: var(--td-label);
+  font-size: 14px;
+  font-style: italic;
+  font-family: 'KaTeX_Math', Georgia, 'Times New Roman', serif;
+}
+
+.td-leg {
+  stroke: var(--td-stroke);
+  stroke-width: 2;
+}
+
+.td-bond {
+  stroke: var(--td-stroke);
+  stroke-width: 2.6;
+}
+
+.td-index-label {
+  fill: var(--td-label);
+  font-size: 13px;
+  font-style: italic;
+  font-family: 'KaTeX_Math', Georgia, 'Times New Roman', serif;
+}
+
+.td-op-open {
+  fill: #ffffff;
+  stroke: var(--td-stroke);
+  stroke-width: 2.2;
+}
+
+.td-op-fill {
+  fill: var(--td-fill);
+  stroke: var(--td-stroke);
+  stroke-width: 2.2;
+}
+
+.td-op-label,
+.td-op-label-light {
+  fill: var(--td-label);
+  font-size: 14px;
+  font-style: italic;
+  font-family: 'KaTeX_Math', Georgia, serif;
+}
+
+.td-inline-math {
+  font-style: italic;
+  font-family: 'KaTeX_Math', Georgia, 'Times New Roman', serif;
+}
+
+.td-empty {
+  text-align: center;
+  color: #555555;
+  font-style: italic;
+  padding: 1.5rem;
+}
+
+.td-interactive {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fbfafa;
+  padding: 1.1rem 1.25rem;
+  margin: 1.6rem 0;
+}
+
+.td-controls {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin: 0.4rem 0 1rem;
+}
+
+@media (max-width: 549px) {
+  .td-controls {
+    grid-template-columns: 1fr;
   }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.td-controls label {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.15rem;
+  color: #555555;
+  gap: 0.25rem;
 }
 
-.step-card {
-  animation: fadeIn 0.2s ease-out;
+.td-controls input[type='range'] {
+  width: 100%;
+  accent-color: var(--maroon);
 }
 
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid #000000;
-  outline-offset: 2px;
+.td-controls output {
+  font-weight: 600;
+  color: var(--maroon-dark);
 }
 
-::placeholder {
-  color: #666666;
-  opacity: 1;
+.td-counts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
 }
 
-sub {
-  font-size: 0.8em;
-  vertical-align: sub;
-  line-height: 0;
+.td-counts > div {
+  background: var(--box);
+  border-radius: 8px;
+  padding: 0.7rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
 }
 
-@media print {
-  .app {
-    background: white;
-  }
+.td-count-label {
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #555555;
+}
 
-  .step-builder {
-    display: none;
-  }
+.td-count-value {
+  font-size: 1.4rem;
+  color: var(--maroon-dark);
+}
 
-  .steps-list {
-    box-shadow: none;
-    border: 1px solid #000000;
-  }
+.td-note {
+  font-size: 1.25rem;
+  color: #555555;
+  margin: 0;
+}
+
+.td-note b {
+  color: #222222;
+  font-weight: 600;
 }
