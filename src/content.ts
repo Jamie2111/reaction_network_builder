@@ -58,7 +58,7 @@ export const SCHLOGL_PRESET: Omit<RawElementaryStep, 'id'>[] = [
 export const PAGE = {
   title: 'Doi-Peliti Method',
   synopsis: [
-    'The Doi-Peliti method[[c:1,2]] recasts the dynamics of a stochastic chemical reaction network as a single linear operator acting on a vector of configuration probabilities. Working in terms of integer molecule counts rather than continuous concentrations expresses each reaction as a product of creation and annihilation operators, and the combinatorial factors associated with indistinguishable reactants are generated automatically by the operator algebra.',
+    'The Doi-Peliti method[[c:1,2]] recasts the dynamics of a stochastic chemical reaction network as a single linear operator acting on a vector of configuration probabilities. Working in terms of integer molecule counts rather than continuous concentrations expresses each reaction as a product of creation and annihilation operators, and the combinatorial factors associated with indistinguishable reactants arise directly from the action of those operators.',
     'This operator representation is also the natural point of departure for tensor-network methods. The probability vector is represented as a Matrix Product State and the generator as a Matrix Product Operator, so that a state space growing as $d^{L}$ can be stored and propagated within a controllable memory budget[[c:7]]. The builder below assembles a reaction mechanism and displays the corresponding operator form and tensor diagrams.',
   ],
 }
