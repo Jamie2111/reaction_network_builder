@@ -2,6 +2,7 @@ import { Fragment, useState, useEffect } from 'react'
 import { formatReactionEquation, formatSecondQuantizedForm, type RawElementaryStep, type ReactionType } from './utils'
 import {
   ARTICLE_SECTIONS,
+  GTS_PRESET,
   PAGE,
   REFERENCES,
   SCHLOGL_PRESET,
@@ -161,16 +162,19 @@ function App() {
     }
   }
 
-  const loadSchloglPreset = () => {
-    const nextSteps = SCHLOGL_PRESET.map((step, index) => ({
+  const loadPreset = (preset: typeof SCHLOGL_PRESET) => {
+    const nextSteps = preset.map((step, index) => ({
       ...step,
       id: `step-${idCounter + index}`,
     }))
 
     setSteps(nextSteps)
-    setCurrentStep({ ...SCHLOGL_PRESET[0], id: '' })
-    setIdCounter((prev) => prev + SCHLOGL_PRESET.length)
+    setCurrentStep({ ...preset[0], id: '' })
+    setIdCounter((prev) => prev + preset.length)
   }
+
+  const loadSchloglPreset = () => loadPreset(SCHLOGL_PRESET)
+  const loadGtsPreset = () => loadPreset(GTS_PRESET)
 
   const clearMechanism = () => {
     setSteps([])
@@ -189,12 +193,15 @@ function App() {
 
           <div className="paper-tools">
             <p className="paper-tools-copy">
-              Load the reversible Schlogl model, a standard bistable test case, or clear the mechanism and
-              build your own.
+              Load a preset network, the reversible Schlogl model or a seven-species gene toggle switch, or
+              clear the mechanism and build your own.
             </p>
             <div className="paper-tools-actions">
               <button className="secondary-btn" onClick={loadSchloglPreset} type="button">
                 Load Schlogl preset
+              </button>
+              <button className="secondary-btn" onClick={loadGtsPreset} type="button">
+                Load GTS preset
               </button>
               <button
                 className="secondary-btn secondary-btn-light"

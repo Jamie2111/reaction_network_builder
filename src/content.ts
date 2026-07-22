@@ -55,6 +55,26 @@ export const SCHLOGL_PRESET: Omit<RawElementaryStep, 'id'>[] = [
   },
 ]
 
+// Seven-species gene toggle switch (14 elementary reactions), following the
+// mass-action construction used by Zima, Nicholson, and Gingrich (arXiv:2501.09692).
+// Species: A, A2 (dimer), B, B2 (dimer), O (free operator), OA2, OB2 (bound operators).
+export const GTS_PRESET: Omit<RawElementaryStep, 'id'>[] = [
+  // dimerization
+  { reactants: '2A', products: 'A2', type: 'equilibrium', forwardRate: 'c_1', reverseRate: 'c_2' },
+  { reactants: '2B', products: 'B2', type: 'equilibrium', forwardRate: 'c_3', reverseRate: 'c_4' },
+  // operator binding
+  { reactants: 'O + A2', products: 'OA2', type: 'equilibrium', forwardRate: 'c_5', reverseRate: 'c_6' },
+  { reactants: 'O + B2', products: 'OB2', type: 'equilibrium', forwardRate: 'c_7', reverseRate: 'c_8' },
+  // synthesis
+  { reactants: 'O', products: 'O + A', type: 'forward', forwardRate: 'c_9', reverseRate: '' },
+  { reactants: 'O', products: 'O + B', type: 'forward', forwardRate: 'c_{10}', reverseRate: '' },
+  { reactants: 'OA2', products: 'OA2 + A', type: 'forward', forwardRate: 'c_{11}', reverseRate: '' },
+  { reactants: 'OB2', products: 'OB2 + B', type: 'forward', forwardRate: 'c_{12}', reverseRate: '' },
+  // degradation
+  { reactants: 'A', products: '', type: 'forward', forwardRate: 'c_{13}', reverseRate: '' },
+  { reactants: 'B', products: '', type: 'forward', forwardRate: 'c_{14}', reverseRate: '' },
+]
+
 export const PAGE = {
   title: 'Doi-Peliti Method',
   synopsis: [

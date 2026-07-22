@@ -173,8 +173,9 @@ export interface ParsedStep {
 }
 
 export const formatReactionEquation = (step: RawElementaryStep): string => {
-    const normalizedReactants = step.reactants;
-    const normalizedProducts = step.products;
+    // an empty side (e.g. a degradation A -> nothing) renders as the empty-set symbol
+    const normalizedReactants = step.reactants.trim() === '' ? '$\\varnothing$' : step.reactants;
+    const normalizedProducts = step.products.trim() === '' ? '$\\varnothing$' : step.products;
 
     let arrow: string;
     const forwardRate = step.forwardRate ? step.forwardRate.trim() : 'c_f';
