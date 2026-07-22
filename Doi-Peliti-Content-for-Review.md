@@ -10,9 +10,9 @@ This operator representation is also the natural point of departure for tensor-n
 
 ## Why count molecules instead of concentrations
 
-Deterministic chemical kinetics tracks concentrations through coupled ordinary differential equations, a description that is accurate when every species is present in large numbers and its concentration is effectively continuous. That description fails when a species is present in only tens or hundreds of copies, as is common for gene products, intracellular signaling molecules, and reactions confined to small volumes. In this regime the copy number is a discrete integer that changes by a single molecule at each reaction event, and the timing of those events is a random process.
+Deterministic chemical kinetics tracks concentrations through coupled ordinary differential equations, a description that is accurate when every species is present in large numbers and its concentration is effectively continuous. That description fails when a species is present in only tens or hundreds of copies, as is common for gene products, intracellular signaling molecules, and reactions confined to small volumes. In this regime the copy number of each species is a discrete integer that changes by a whole number of molecules at each reaction event, and the timing of those events is a random process.
 
-The appropriate description is then a probability distribution over integer copy numbers. Writing $\mathbf{n}$ for the vector of copy numbers of each species, $p(\mathbf{n}, t)$ denotes the probability of configuration $\mathbf{n}$ at time $t$, and its evolution obeys the chemical master equation [3], a linear rate equation with one term per reaction. The master equation is readily written but difficult to solve, since the number of accessible configurations grows combinatorially with the number of species and reactions [4].
+The appropriate description is then a probability distribution over integer copy numbers. Writing $\mathbf{n}$ for the vector of copy numbers of each species, $p(\mathbf{n}, t)$ denotes the probability of configuration $\mathbf{n}$ at time $t$, and its evolution obeys the chemical master equation [3], a linear rate equation with one term per reaction. The master equation is readily written but difficult to solve, since the number of accessible configurations grows combinatorially with the number of species [4].
 
 The Doi-Peliti method does not alter the underlying physics. It re-expresses the same master equation in an operator language that exposes its algebraic structure and, in particular, renders it amenable to tensor-network representation.
 
@@ -54,7 +54,7 @@ The forward Schlogl step, $2X + A \to 3X$, follows the same construction with ad
 
 $$\mathbb{W}_{1,f} = \frac{c_1}{2}\left(x_X^{\dagger 3} - x_X^{\dagger 2}\, x_A^{\dagger}\right) x_X^{2}\, x_A .$$
 
-Reading from right to left, the factor $x_X^{2}\, x_A$ annihilates the reactants and supplies the $\tfrac{1}{2}n(n-1)$ ordered pairs of identical $X$, with the prefactor $\tfrac{1}{2}$ correcting for their ordering. The bracketed term then either creates the three product molecules of $X$, which is the gain, or restores the two $X$ and one $A$ that were consumed, which is the loss. Their difference is the net change in configuration, and the minus sign enforces probability conservation. For a general reaction with reactant stoichiometry $\eta_i$, product stoichiometry $\mu_i$, and rate constant $k$, the operator is
+Reading from right to left, the factor $x_X^{2}\, x_A$ annihilates the reactants and supplies the $\tfrac{1}{2}n_X(n_X-1)\,n_A$ ways of selecting the two identical $X$ and one $A$, with the prefactor $\tfrac{1}{2}$ correcting for the ordering of the two $X$. The bracketed term then either creates the three product molecules of $X$, which is the gain, or restores the two $X$ and one $A$ that were consumed, which is the loss. Their difference is the net change in configuration, and the minus sign enforces probability conservation. For a general reaction with reactant stoichiometry $\eta_i$, product stoichiometry $\mu_i$, and rate constant $k$, the operator is
 
 $$\hat{H} = k\left(\prod_i \left(a_i^\dagger\right)^{\mu_i} - \prod_i \left(a_i^\dagger\right)^{\eta_i}\right)\prod_i a_i^{\eta_i} .$$
 
@@ -62,7 +62,7 @@ The reverse step follows the same construction applied to the reversed reaction 
 
 ## Building the generator
 
-A reaction mechanism comprises several elementary reactions, and its generator $\hat{H}$ is the sum of the operator terms of the individual steps, so the mechanism assembled in the builder corresponds to a single matrix. Because each term is constructed as gain minus loss, the sum conserves total probability, the defining property of a stochastic generator.
+A reaction mechanism comprises several elementary reactions, and its generator $\hat{H}$ is the sum of the operator terms of the individual steps, so the mechanism assembled in the builder corresponds to a single matrix. Because each term is constructed as gain minus loss, the sum conserves total probability.
 
 This generator specifies the full dynamics. The distribution evolves under a single linear equation whose formal solution is a matrix exponential, so that the entire time evolution is determined by $\hat{H}$ and the initial condition,
 
@@ -76,31 +76,35 @@ Operators constructed from $a$ and $a^{\dagger}$ are tensors, and tensor diagram
 
 > *[Figure: a single factor tensor. Caption: "A single factor tensor. Each line is an index, and the number of lines is the order of the tensor (here, order 3). The number of values an index can take is its dimension."]*
 
-Connecting two lines denotes a contraction, that is, a summation over the shared index. A line joining two shapes is an internal index of the resulting network, and a line left uncontracted is an external index. The order of the tensor computed by a diagram equals the number of external lines, so a diagram with no uncontracted indices evaluates to a scalar.
+Connecting two lines denotes a contraction, that is, a summation over the shared index. For example, contracting an order-2 tensor $M$ and an order-3 tensor $N$ over a shared index $j$ yields a tensor with external indices $i$, $k$, and $l$,
 
-> *[Figure: a contraction of two tensors. Caption: "A contraction of two tensors: the connected line denotes summation over the shared index. That line is an internal index, and the uncontracted lines are external indices."]*
+$$T_{ikl} = \sum_{j} M_{ij}\, N_{jkl} .$$
+
+> *[Figure: a contraction of two tensors, representing the equation above. Caption: "A contraction of two tensors: the connected line denotes summation over the shared index. That line is an internal index, and the uncontracted lines are external indices."]*
+
+A line joining two shapes is an internal index of the resulting network, and each line left uncontracted is an external index. The order of the tensor computed by a diagram equals the number of external lines, so a diagram with no uncontracted indices evaluates to a scalar.
 
 These two rules, shapes with indices and contractions as summations, suffice to represent the operators introduced above and, in the following section, the full state and generator.
 
 ## From operators to tensor networks
 
-A single well-mixed species can be treated directly. The tensor-network representation becomes valuable for spatially extended systems, modeled as a chain of small volumes, or voxels, in which molecules react locally and hop between neighboring voxels. Each voxel carries its own occupation number, so a chain of $L$ voxels supports a distribution over $d^{L}$ configurations once the occupation of each voxel is truncated at $d$ values. Storing this distribution explicitly is intractable for all but the shortest chains.
+A single well-mixed species can be treated directly. The tensor-network representation becomes valuable when the distribution is high-dimensional, whether because the network contains many chemical species whose copy numbers are correlated or because a spatially extended system is resolved into a chain of small volumes, or voxels. In either case the degrees of freedom form a chain of sites, one per species or per voxel, each carrying its own occupation number, and a chain of $L$ sites supports a distribution over $d^{L}$ configurations once each occupation is truncated to $d$ states. Storing this distribution explicitly is intractable for all but the smallest systems.
 
-A Matrix Product State circumvents explicit storage. The distribution is expressed as a chain of factor tensors, one per voxel, each carrying a vertical external index for its local occupation and horizontal internal indices connecting it to its neighbors,
+A Matrix Product State circumvents explicit storage. The distribution is expressed as a chain of factor tensors, one per site, each carrying a vertical external index for its local occupation and horizontal internal indices connecting it to its neighbors,
 
 $$\left|p(t)\right\rangle \approx \sum_{n_1,\ldots,n_L} A^{[1]n_1}A^{[2]n_2}\cdots A^{[L]n_L}\left|n_1,\ldots,n_L\right\rangle .$$
 
 > *[Figure: a Matrix Product State chain. Caption: "A Matrix Product State for the probability vector |p(t)>. Each factor tensor carries a vertical external index (a local occupation number) and is connected to its neighbors by horizontal internal (bond) indices."]*
 
-The dimension of these internal bonds, denoted $\chi$, controls the amount of correlation between voxels that the representation can capture. It is the rank of the factorization across each bipartition of the chain, and increasing it improves accuracy at the cost of memory.
+The dimension of these internal bonds, denoted $\chi$, controls the amount of correlation between sites that the representation can capture. It is the rank of the factorization across each bipartition of the chain, and increasing it improves accuracy at the cost of memory.
 
-The generator admits the same structure. Because the Doi-Peliti operators are composed of local reaction and hopping terms, $\hat{H}$ can be written as a Matrix Product Operator, a chain of factor tensors each carrying an upper and a lower external index.
+The generator admits the same structure. Because each Doi-Peliti operator couples only a few sites, $\hat{H}$ can be written as a Matrix Product Operator, a chain of factor tensors each carrying an upper and a lower external index.
 
-> *[Figure: a Matrix Product Operator chain. Caption: "A Matrix Product Operator for the generator H-hat. Each factor tensor carries an upper and a lower external index, mapping occupation states to occupation states, and is connected to its neighbors by internal bond indices."]*
+> *[Figure: a Matrix Product Operator chain, with upper indices n_i and lower indices n'_i. Caption: "A Matrix Product Operator for the generator H-hat. Each factor tensor carries an upper external index n_i and a lower external index n'_i, mapping occupation states to occupation states, and is connected to its neighbors by internal bond indices."]*
 
 Time evolution then proceeds by contracting the operator network with the state network and compressing the result to a prescribed bond dimension [7]. The controls below compare the number of parameters in the tensor-network representation with the size of the full distribution as the chain length increases.
 
-> *[Interactive chain diagram with sliders for the number of voxels, the bond dimension, and the occupation cut-off. Note beneath it: "Increasing the bond dimension chi raises the rank the representation can capture, improving accuracy at the cost of memory. The full distribution grows as $d^{L}$, so a compressed tensor-network representation becomes necessary as the chain length increases."]*
+> *[Interactive chain diagram with sliders for the number of sites, the bond dimension, and the occupation cut-off. The local dimension is d+1 for a cut-off of d (occupations 0..d), so the full distribution has $(d+1)^{L}$ entries and the open-boundary MPS has $(L-2)\chi^{2}(d+1) + 2\chi(d+1)$ parameters. Note beneath it: "Increasing the bond dimension chi raises the rank the representation can capture, improving accuracy at the cost of memory. The full distribution grows as $(d+1)^{L}$, so a compressed tensor-network representation becomes necessary as the chain length increases."]*
 
 ## Application: rare events on a reaction-diffusion chain
 
@@ -118,6 +122,6 @@ The overall framework is modular: the Doi-Peliti construction supplies the local
 2. L. Peliti, "Path Integral Approach to Birth-Death Processes on a Lattice," Journal de Physique 46, 1469 (1985). [doi:10.1051/jphys:019850046090146900](https://doi.org/10.1051/jphys:019850046090146900)
 3. N. G. van Kampen, Stochastic Processes in Physics and Chemistry, 3rd ed. (North-Holland, 2007).
 4. D. T. Gillespie, "Exact Stochastic Simulation of Coupled Chemical Reactions," Journal of Physical Chemistry 81, 2340 (1977). [doi:10.1021/j100540a008](https://doi.org/10.1021/j100540a008)
-5. J. P. Zima, S. B. Nicholson, and T. R. Gingrich, "Chemical master equation parameter exploration using DMRG," Journal of Chemical Physics 163, 054118 (2025). [arXiv:2501.09692](https://arxiv.org/abs/2501.09692)
+5. J. P. Zima, S. B. Nicholson, and T. R. Gingrich, "Chemical master equation parameter exploration using DMRG," Journal of Chemical Physics 163, 054118 (2025). [doi:10.1063/5.0276591](https://doi.org/10.1063/5.0276591)
 6. S. B. Nicholson and T. R. Gingrich, "Quantifying Rare Events in Stochastic Reaction-Diffusion Dynamics Using Tensor Networks," Physical Review X 13, 041006 (2023). [doi:10.1103/PhysRevX.13.041006](https://doi.org/10.1103/PhysRevX.13.041006)
 7. U. Schollwock, "The Density-Matrix Renormalization Group in the Age of Matrix Product States," Annals of Physics 326, 96 (2011). [doi:10.1016/j.aop.2010.09.012](https://doi.org/10.1016/j.aop.2010.09.012)

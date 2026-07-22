@@ -237,8 +237,8 @@ export const MPOFigure: React.FC<{ sites?: number }> = ({ sites = 5 }) => {
           shape="square"
           r={17}
           legs={[
-            { dir: 'up', len: 26 },
-            { dir: 'down', len: 26 },
+            { dir: 'up', len: 26, label: `n_${i + 1}` },
+            { dir: 'down', len: 26, label: `n′_${i + 1}` },
           ]}
         />
       ))}
@@ -352,9 +352,12 @@ export const InteractiveChainDiagram: React.FC<{ seedSites?: number }> = ({ seed
   // bond-line thickness tracks the bond dimension, kept to a small visible range
   const bondWidth = 1.6 + ((chi - 1) / 31) * 2.6
 
-  // crude but honest counts: full state space d^L versus an MPS parameter count
-  const full = Math.pow(trunc, sites)
-  const mps = sites * trunc * chi * chi
+  // a cut-off of d means occupations 0..d, i.e. d+1 local states (the physical dimension)
+  const dim = trunc + 1
+  // full state space (d+1)^L versus the MPS parameter count for an open-boundary chain:
+  // two boundary tensors of size (d+1)*chi and (L-2) bulk tensors of size (d+1)*chi^2
+  const full = Math.pow(dim, sites)
+  const mps = (sites - 2) * chi * chi * dim + 2 * chi * dim
   const fmt = (n: number) =>
     n >= 1e6 ? n.toExponential(1) : n.toLocaleString('en-US', { maximumFractionDigits: 0 })
 
@@ -366,9 +369,10 @@ export const InteractiveChainDiagram: React.FC<{ seedSites?: number }> = ({ seed
         caption={
           <>
             The probability vector <span className="td-inline-math">|p(t)&rang;</span> represented as a Matrix
-            Product State on <b>{sites}</b> voxels. Vertical lines are external indices (local occupation,
-            dimension <span className="td-inline-math">d&nbsp;=&nbsp;{trunc}</span>); horizontal lines are
-            internal bond indices of dimension <span className="td-inline-math">&chi;&nbsp;=&nbsp;{chi}</span>.
+            Product State on <b>{sites}</b> sites. Vertical lines are external indices (local occupation with
+            cut-off <span className="td-inline-math">d&nbsp;=&nbsp;{trunc}</span>, i.e.{' '}
+            <span className="td-inline-math">d&#8202;+&#8202;1&nbsp;=&nbsp;{dim}</span> states); horizontal lines
+            are internal bond indices of dimension <span className="td-inline-math">&chi;&nbsp;=&nbsp;{chi}</span>.
           </>
         }
       >
@@ -435,7 +439,7 @@ export const InteractiveChainDiagram: React.FC<{ seedSites?: number }> = ({ seed
         <div>
           <span className="td-count-label">Full distribution</span>
           <span className="td-count-value">
-            d<sup>L</sup> = {fmt(full)} numbers
+            (d+1)<sup>L</sup> = {fmt(full)} numbers
           </span>
         </div>
         <div>
@@ -446,7 +450,7 @@ export const InteractiveChainDiagram: React.FC<{ seedSites?: number }> = ({ seed
       <p className="td-note">
         Increasing the bond dimension &chi; raises the <b>rank</b> the representation can capture, improving
         accuracy at the cost of memory. The full distribution grows as{' '}
-        <span className="td-inline-math">d&#8202;<sup>L</sup></span>, so a compressed tensor-network
+        <span className="td-inline-math">(d+1)&#8202;<sup>L</sup></span>, so a compressed tensor-network
         representation becomes necessary as the chain length increases.
       </p>
     </div>

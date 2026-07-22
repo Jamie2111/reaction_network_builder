@@ -90,11 +90,11 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
     body: [
       {
         kind: 'p',
-        text: 'Deterministic chemical kinetics tracks concentrations through coupled ordinary differential equations, a description that is accurate when every species is present in large numbers and its concentration is effectively continuous. That description fails when a species is present in only tens or hundreds of copies, as is common for gene products, intracellular signaling molecules, and reactions confined to small volumes. In this regime the copy number is a discrete integer that changes by a single molecule at each reaction event, and the timing of those events is a random process.',
+        text: 'Deterministic chemical kinetics tracks concentrations through coupled ordinary differential equations, a description that is accurate when every species is present in large numbers and its concentration is effectively continuous. That description fails when a species is present in only tens or hundreds of copies, as is common for gene products, intracellular signaling molecules, and reactions confined to small volumes. In this regime the copy number of each species is a discrete integer that changes by a whole number of molecules at each reaction event, and the timing of those events is a random process.',
       },
       {
         kind: 'p',
-        text: 'The appropriate description is then a probability distribution over integer copy numbers. Writing $\\mathbf{n}$ for the vector of copy numbers of each species, $p(\\mathbf{n}, t)$ denotes the probability of configuration $\\mathbf{n}$ at time $t$, and its evolution obeys the chemical master equation[[c:3]], a linear rate equation with one term per reaction. The master equation is readily written but difficult to solve, since the number of accessible configurations grows combinatorially with the number of species and reactions[[c:4]].',
+        text: 'The appropriate description is then a probability distribution over integer copy numbers. Writing $\\mathbf{n}$ for the vector of copy numbers of each species, $p(\\mathbf{n}, t)$ denotes the probability of configuration $\\mathbf{n}$ at time $t$, and its evolution obeys the chemical master equation[[c:3]], a linear rate equation with one term per reaction. The master equation is readily written but difficult to solve, since the number of accessible configurations grows combinatorially with the number of species[[c:4]].',
       },
       {
         kind: 'p',
@@ -180,7 +180,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'p',
-        text: 'Reading from right to left, the factor $x_X^{2}\\, x_A$ annihilates the reactants and supplies the $\\tfrac{1}{2}n(n-1)$ ordered pairs of identical $X$, with the prefactor $\\tfrac{1}{2}$ correcting for their ordering. The bracketed term then either creates the three product molecules of $X$, which is the gain, or restores the two $X$ and one $A$ that were consumed, which is the loss. Their difference is the net change in configuration, and the minus sign enforces probability conservation. For a general reaction with reactant stoichiometry $\\eta_i$, product stoichiometry $\\mu_i$, and rate constant $k$, the operator is',
+        text: 'Reading from right to left, the factor $x_X^{2}\\, x_A$ annihilates the reactants and supplies the $\\tfrac{1}{2}n_X(n_X-1)\\,n_A$ ways of selecting the two identical $X$ and one $A$, with the prefactor $\\tfrac{1}{2}$ correcting for the ordering of the two $X$. The bracketed term then either creates the three product molecules of $X$, which is the gain, or restores the two $X$ and one $A$ that were consumed, which is the loss. Their difference is the net change in configuration, and the minus sign enforces probability conservation. For a general reaction with reactant stoichiometry $\\eta_i$, product stoichiometry $\\mu_i$, and rate constant $k$, the operator is',
       },
       {
         kind: 'eq',
@@ -198,7 +198,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
     body: [
       {
         kind: 'p',
-        text: 'A reaction mechanism comprises several elementary reactions, and its generator $\\hat{H}$ is the sum of the operator terms of the individual steps, so the mechanism assembled in the builder corresponds to a single matrix. Because each term is constructed as gain minus loss, the sum conserves total probability, the defining property of a stochastic generator.',
+        text: 'A reaction mechanism comprises several elementary reactions, and its generator $\\hat{H}$ is the sum of the operator terms of the individual steps, so the mechanism assembled in the builder corresponds to a single matrix. Because each term is constructed as gain minus loss, the sum conserves total probability.',
       },
       {
         kind: 'p',
@@ -225,9 +225,17 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       { kind: 'widget', widget: 'factorFig' },
       {
         kind: 'p',
-        text: 'Connecting two lines denotes a contraction, that is, a summation over the shared index. A line joining two shapes is an internal index of the resulting network, and a line left uncontracted is an external index. The order of the tensor computed by a diagram equals the number of external lines, so a diagram with no uncontracted indices evaluates to a scalar.',
+        text: 'Connecting two lines denotes a contraction, that is, a summation over the shared index. For example, contracting an order-2 tensor $M$ and an order-3 tensor $N$ over a shared index $j$ yields a tensor with external indices $i$, $k$, and $l$,',
+      },
+      {
+        kind: 'eq',
+        latex: String.raw`T_{ikl} = \sum_{j} M_{ij}\, N_{jkl} .`,
       },
       { kind: 'widget', widget: 'contractionFig' },
+      {
+        kind: 'p',
+        text: 'A line joining two shapes is an internal index of the resulting network, and each line left uncontracted is an external index. The order of the tensor computed by a diagram equals the number of external lines, so a diagram with no uncontracted indices evaluates to a scalar.',
+      },
       {
         kind: 'p',
         text: 'These two rules, shapes with indices and contractions as summations, suffice to represent the operators introduced above and, in the following section, the full state and generator.',
@@ -240,11 +248,11 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
     body: [
       {
         kind: 'p',
-        text: 'A single well-mixed species can be treated directly. The tensor-network representation becomes valuable for spatially extended systems, modeled as a chain of small volumes, or voxels, in which molecules react locally and hop between neighboring voxels. Each voxel carries its own occupation number, so a chain of $L$ voxels supports a distribution over $d^{L}$ configurations once the occupation of each voxel is truncated at $d$ values. Storing this distribution explicitly is intractable for all but the shortest chains.',
+        text: 'A single well-mixed species can be treated directly. The tensor-network representation becomes valuable when the distribution is high-dimensional, whether because the network contains many chemical species whose copy numbers are correlated or because a spatially extended system is resolved into a chain of small volumes, or voxels. In either case the degrees of freedom form a chain of sites, one per species or per voxel, each carrying its own occupation number, and a chain of $L$ sites supports a distribution over $d^{L}$ configurations once each occupation is truncated to $d$ states. Storing this distribution explicitly is intractable for all but the smallest systems.',
       },
       {
         kind: 'p',
-        text: 'A Matrix Product State circumvents explicit storage. The distribution is expressed as a chain of factor tensors, one per voxel, each carrying a vertical external index for its local occupation and horizontal internal indices connecting it to its neighbors,',
+        text: 'A Matrix Product State circumvents explicit storage. The distribution is expressed as a chain of factor tensors, one per site, each carrying a vertical external index for its local occupation and horizontal internal indices connecting it to its neighbors,',
       },
       {
         kind: 'eq',
@@ -253,11 +261,11 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       { kind: 'widget', widget: 'mpsFig' },
       {
         kind: 'p',
-        text: 'The dimension of these internal bonds, denoted $\\chi$, controls the amount of correlation between voxels that the representation can capture. It is the rank of the factorization across each bipartition of the chain, and increasing it improves accuracy at the cost of memory.',
+        text: 'The dimension of these internal bonds, denoted $\\chi$, controls the amount of correlation between sites that the representation can capture. It is the rank of the factorization across each bipartition of the chain, and increasing it improves accuracy at the cost of memory.',
       },
       {
         kind: 'p',
-        text: 'The generator admits the same structure. Because the Doi-Peliti operators are composed of local reaction and hopping terms, $\\hat{H}$ can be written as a Matrix Product Operator, a chain of factor tensors each carrying an upper and a lower external index.',
+        text: 'The generator admits the same structure. Because each Doi-Peliti operator couples only a few sites, $\\hat{H}$ can be written as a Matrix Product Operator, a chain of factor tensors each carrying an upper and a lower external index.',
       },
       { kind: 'widget', widget: 'mpoFig' },
       {
@@ -317,8 +325,8 @@ export const REFERENCES: Reference[] = [
   {
     n: 5,
     text: 'J. P. Zima, S. B. Nicholson, and T. R. Gingrich, "Chemical master equation parameter exploration using DMRG," Journal of Chemical Physics 163, 054118 (2025).',
-    href: 'https://arxiv.org/abs/2501.09692',
-    hrefLabel: 'arXiv:2501.09692',
+    href: 'https://doi.org/10.1063/5.0276591',
+    hrefLabel: 'doi:10.1063/5.0276591',
   },
   {
     n: 6,
