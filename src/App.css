@@ -365,6 +365,23 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
+  /* keep a long mechanism from running down the page: scroll it instead */
+  max-height: 600px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.builder-panel .steps-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.builder-panel .steps-container::-webkit-scrollbar-thumb {
+  background: #d3cdcb;
+  border-radius: 4px;
+}
+
+.builder-panel .steps-container::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .builder-panel .step-card {
