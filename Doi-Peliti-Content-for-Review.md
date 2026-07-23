@@ -30,7 +30,7 @@ Combinatorial factors therefore arise automatically. A step that consumes two mo
 
 $$a^2\left|n\right\rangle = n(n-1)\left|n-2\right\rangle .$$
 
-A caveat on notation is warranted. The dagger is an algebraic label rather than a Hermitian conjugate. The Doi-Peliti construction borrows the symbols of second quantization, but the evolved object is a classical probability distribution, and the inner product of quantum mechanics does not apply.
+A caveat on notation is warranted. The dagger is an algebraic label rather than a Hermitian conjugate. The Doi-Peliti construction borrows the symbols of second quantization, but the evolved object is a classical probability distribution rather than a quantum wave function, normalized in the 1-norm (its entries sum to one) rather than the 2-norm.
 
 The builder below assembles elementary steps and displays each reaction as a balanced equation together with its generated operator term; hovering over an operator reveals the truncated matrix it represents. The preset loads the reversible Schlogl model, a standard test case for stochastic bistability and switching.
 
@@ -44,11 +44,11 @@ $$\hat{H}_{A\to\varnothing} = k\left(a - a^\dagger a\right) .$$
 
 The gain term $a$ removes one molecule, transferring probability from each state to the state with one fewer molecule. The loss term $a^{\dagger}a$ is the number operator, with $a^{\dagger}a\left|n\right\rangle = n\left|n\right\rangle$ counting the molecules available to decay while leaving the configuration unchanged; the minus sign removes the corresponding probability from the originating state. Probability leaves each state at exactly the rate at which it accumulates elsewhere, which is the statement of conservation.
 
-The bimolecular reaction $2A\to B$ introduces the essential additional feature,
+The bimolecular reaction $2A\to B$ has the operator
 
 $$\hat{H}_{2A\to B} = k\left(b^\dagger a^2 - a^{\dagger 2} a^2\right) .$$
 
-That feature is the pair annihilation $a^2$. Since $a^2\left|n\right\rangle = n(n-1)\left|n-2\right\rangle$, the operator already encodes the number of ordered pairs of reacting molecules. The gain term $b^{\dagger}a^2$ removes two molecules of $A$ and creates one of $B$, while the loss term $a^{\dagger 2}a^2$ counts the same pairs and restores them. The combinatorial factor is supplied by the annihilation operators rather than inserted separately.
+Its new element is the pair annihilation $a^2$. Since $a^2\left|n\right\rangle = n(n-1)\left|n-2\right\rangle$, the operator already encodes the number of ordered pairs of reacting molecules. The gain term $b^{\dagger}a^2$ removes two molecules of $A$ and creates one of $B$, while the loss term $a^{\dagger 2}a^2$ counts the same pairs and restores them. The combinatorial factor is supplied by the annihilation operators rather than inserted separately.
 
 The forward Schlogl step, $2X + A \to 3X$, follows the same construction with additional species. Factoring out the annihilation of the reactants exposes the structure,
 
@@ -74,9 +74,9 @@ Constructing $\hat{H}$ is straightforward; the difficulty lies in applying $e^{t
 
 Operators constructed from $a$ and $a^{\dagger}$ are tensors, and tensor diagram notation provides a compact representation of them. In this notation a tensor is drawn as a shaded shape, and each index is a line emanating from it. The number of lines is the order of the tensor, and the number of values an index can take is its dimension; a matrix, for example, is an order-2 tensor with one incoming and one outgoing line.
 
-> *[Figure: a single factor tensor. Caption: "A single factor tensor. Each line is an index, and the number of lines is the order of the tensor (here, order 3). The number of values an index can take is its dimension."]*
+> *[Figure: a single tensor. Caption: "A single tensor. Each line is an index, and the number of lines is the order of the tensor (here, order 3). The number of values an index can take is its dimension."]*
 
-Connecting two lines denotes a contraction, that is, a summation over the shared index. For example, contracting an order-2 tensor $M$ and an order-3 tensor $N$ over a shared index $j$ yields a tensor with external indices $i$, $k$, and $l$,
+Connecting two lines denotes a contraction, that is, a summation over the shared index. For example, contracting $M_{ij}$ with $N_{jkl}$ over the shared index $j$ produces a tensor with external indices $i$, $k$, and $l$,
 
 $$T_{ikl} = \sum_{j} M_{ij}\, N_{jkl} .$$
 

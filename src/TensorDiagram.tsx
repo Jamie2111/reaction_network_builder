@@ -124,7 +124,7 @@ export const FactorTensorFigure: React.FC = () => (
     viewBox="0 24 260 88"
     caption={
       <>
-        A single <b>factor tensor</b>. Each line is an index, and the number of lines is the{' '}
+        A single <b>tensor</b>. Each line is an index, and the number of lines is the{' '}
         <b>order</b> of the tensor (here, order 3). The number of values an index can take is its{' '}
         <b>dimension</b>.
       </>

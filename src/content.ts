@@ -132,7 +132,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'p',
-        text: 'A caveat on notation is warranted. The dagger is an algebraic label rather than a Hermitian conjugate. The Doi-Peliti construction borrows the symbols of second quantization, but the evolved object is a classical probability distribution, and the inner product of quantum mechanics does not apply.',
+        text: 'A caveat on notation is warranted. The dagger is an algebraic label rather than a Hermitian conjugate. The Doi-Peliti construction borrows the symbols of second quantization, but the evolved object is a classical probability distribution rather than a quantum wave function, normalized in the 1-norm (its entries sum to one) rather than the 2-norm.',
       },
       {
         kind: 'p',
@@ -160,7 +160,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'p',
-        text: 'The bimolecular reaction $2A\\to B$ introduces the essential additional feature,',
+        text: 'The bimolecular reaction $2A\\to B$ has the operator',
       },
       {
         kind: 'eq',
@@ -168,7 +168,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'p',
-        text: 'That feature is the pair annihilation $a^2$. Since $a^2\\left|n\\right\\rangle = n(n-1)\\left|n-2\\right\\rangle$, the operator already encodes the number of ordered pairs of reacting molecules. The gain term $b^{\\dagger}a^2$ removes two molecules of $A$ and creates one of $B$, while the loss term $a^{\\dagger 2}a^2$ counts the same pairs and restores them. The combinatorial factor is supplied by the annihilation operators rather than inserted separately.',
+        text: 'Its new element is the pair annihilation $a^2$. Since $a^2\\left|n\\right\\rangle = n(n-1)\\left|n-2\\right\\rangle$, the operator already encodes the number of ordered pairs of reacting molecules. The gain term $b^{\\dagger}a^2$ removes two molecules of $A$ and creates one of $B$, while the loss term $a^{\\dagger 2}a^2$ counts the same pairs and restores them. The combinatorial factor is supplied by the annihilation operators rather than inserted separately.',
       },
       {
         kind: 'p',
@@ -225,7 +225,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       { kind: 'widget', widget: 'factorFig' },
       {
         kind: 'p',
-        text: 'Connecting two lines denotes a contraction, that is, a summation over the shared index. For example, contracting an order-2 tensor $M$ and an order-3 tensor $N$ over a shared index $j$ yields a tensor with external indices $i$, $k$, and $l$,',
+        text: 'Connecting two lines denotes a contraction, that is, a summation over the shared index. For example, contracting $M_{ij}$ with $N_{jkl}$ over the shared index $j$ produces a tensor with external indices $i$, $k$, and $l$,',
       },
       {
         kind: 'eq',
