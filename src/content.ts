@@ -225,7 +225,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       { kind: 'widget', widget: 'factorFig' },
       {
         kind: 'p',
-        text: 'Connecting two lines denotes a contraction, that is, a summation over the shared index. For example, contracting $M_{ij}$ with $N_{jkl}$ over the shared index $j$ produces a tensor with external indices $i$, $k$, and $l$,',
+        text: 'Connecting two lines denotes a contraction, that is, a summation over the shared index. For example, contracting a tensor $M$ with indices $i$ and $j$ and a tensor $N$ with indices $j$, $k$, and $l$ over their shared index $j$ produces a tensor with external indices $i$, $k$, and $l$,',
       },
       {
         kind: 'eq',

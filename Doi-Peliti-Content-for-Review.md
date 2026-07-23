@@ -76,7 +76,7 @@ Operators constructed from $a$ and $a^{\dagger}$ are tensors, and tensor diagram
 
 > *[Figure: a single tensor. Caption: "A single tensor. Each line is an index, and the number of lines is the order of the tensor (here, order 3). The number of values an index can take is its dimension."]*
 
-Connecting two lines denotes a contraction, that is, a summation over the shared index. For example, contracting $M_{ij}$ with $N_{jkl}$ over the shared index $j$ produces a tensor with external indices $i$, $k$, and $l$,
+Connecting two lines denotes a contraction, that is, a summation over the shared index. For example, contracting a tensor $M$ with indices $i$ and $j$ and a tensor $N$ with indices $j$, $k$, and $l$ over their shared index $j$ produces a tensor with external indices $i$, $k$, and $l$,
 
 $$T_{ikl} = \sum_{j} M_{ij}\, N_{jkl} .$$
 
