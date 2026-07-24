@@ -397,6 +397,20 @@ body {
   background: transparent;
 }
 
+/*
+ * Firefox does not support ::-webkit-scrollbar, so give every scroll container a
+ * thin styled scrollbar via the standard properties to match other browsers.
+ */
+.builder-panel .steps-container,
+.tn-eq,
+.builder-panel .preview-equation,
+.builder-panel .step-equation,
+.builder-panel .step-second-quantized,
+.katex-display {
+  scrollbar-width: thin;
+  scrollbar-color: #cfc7c4 transparent;
+}
+
 .builder-panel .step-card {
   background: #ffffff;
   border: 1px solid var(--line);
@@ -657,6 +671,12 @@ body {
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
   margin-bottom: 0.8rem;
+}
+
+@media (max-width: 549px) {
+  .td-counts {
+    grid-template-columns: 1fr;
+  }
 }
 
 .td-counts > div {
