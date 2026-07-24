@@ -6,7 +6,7 @@
 
 The Doi-Peliti method [1,2] recasts the dynamics of a stochastic chemical reaction network as a single linear operator acting on a vector of configuration probabilities. Working in terms of integer molecule counts rather than continuous concentrations expresses each reaction as a product of creation and annihilation operators, and the combinatorial factors associated with indistinguishable reactants arise directly from the action of those operators.
 
-This operator representation is also the natural point of departure for tensor-network methods. The probability vector is represented as a Matrix Product State and the generator as a Matrix Product Operator, so that a state space growing as $d^{L}$ can be stored and propagated within a controllable memory budget [7]. The builder on the page assembles a reaction mechanism and displays the corresponding operator form and tensor diagrams.
+This operator representation is also the natural point of departure for tensor-network methods. The probability vector is represented as a [Matrix Product State](https://tensornetwork.org/mps/) and the generator as a [Matrix Product Operator](https://tensornetwork.org/mpo/), so that a state space growing as $d^{L}$ can be stored and propagated within a controllable memory budget [7]. The builder on the page assembles a reaction mechanism and displays the corresponding operator form and tensor diagrams.
 
 ## Why count molecules instead of concentrations
 
@@ -72,7 +72,7 @@ Constructing $\hat{H}$ is straightforward; the difficulty lies in applying $e^{t
 
 ## Reading the operators as tensor diagrams
 
-Operators constructed from $a$ and $a^{\dagger}$ are tensors, and tensor diagram notation provides a compact representation of them. In this notation a tensor is drawn as a shaded shape, and each index is a line emanating from it. The number of lines is the order of the tensor, and the number of values an index can take is its dimension; a matrix, for example, is an order-2 tensor with one incoming and one outgoing line.
+Operators constructed from $a$ and $a^{\dagger}$ are [tensors](https://tensornetwork.org/tensor/), and [tensor diagram notation](https://tensornetwork.org/diagrams/) provides a compact representation of them. In this notation a tensor is drawn as a shaded shape, and each index is a line emanating from it. The number of lines is the order of the tensor, and the number of values an index can take is its dimension; a matrix, for example, is an order-2 tensor with one incoming and one outgoing line.
 
 > *[Figure: a single tensor. Caption: "A single tensor. Each line is an index, and the number of lines is the order of the tensor (here, order 3). The number of values an index can take is its dimension."]*
 
@@ -112,7 +112,7 @@ A representative application is the estimation of rare transition rates, such as
 
 This procedure has been implemented for a reaction-diffusion chain by representing the distribution as a Matrix Product State and the generator as a Matrix Product Operator, and propagating the compressed state with the time-dependent variational principle [6]. The compression renders the extended chain tractable, while the operator representation preserves the exact accounting of probability flow, yielding the switching rate without a prescribed reaction coordinate.
 
-A closely related approach applies the density-matrix renormalization group to survey the rate constants of a well-mixed network, constructing the joint distribution over correlated copy numbers as a tensor network and tracking its variation across parameter space [5]. The operator construction described here provides precisely the input required by such methods.
+A closely related approach applies the [density-matrix renormalization group](https://tensornetwork.org/mps/algorithms/dmrg/) to survey the rate constants of a well-mixed network, constructing the joint distribution over correlated copy numbers as a tensor network and tracking its variation across parameter space [5]. The operator construction described here provides precisely the input required by such methods.
 
 The overall framework is modular: the Doi-Peliti construction supplies the local operator structure, tensor diagram notation makes that structure explicit, and the Matrix Product State and Operator provide the compression that extends the same formulation to systems well beyond the reach of direct enumeration.
 

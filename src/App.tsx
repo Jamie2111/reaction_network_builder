@@ -55,10 +55,11 @@ const emptyCurrentStep = {
   reverseRate: 'c_r',
 }
 
-// Render text containing inline math ($...$) and citation tokens ([[c:5]] or [[c:1,2]]).
+// Render text containing inline math ($...$), citation tokens ([[c:5]] or [[c:1,2]]),
+// and markdown-style links ([text](url)).
 const renderRich = (text: string) => {
   return text
-    .split(/(\$[^$]+\$|\[\[c:[\d,]+\]\])/g)
+    .split(/(\$[^$]+\$|\[\[c:[\d,]+\]\]|\[[^\]]+\]\([^)]+\))/g)
     .filter(Boolean)
     .map((part, index) => {
       if (part.startsWith('$') && part.endsWith('$')) {
@@ -82,6 +83,15 @@ const renderRich = (text: string) => {
               </a>
             ))}
           </span>
+        )
+      }
+
+      const link = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
+      if (link) {
+        return (
+          <a key={index} href={link[2]} target="_blank" rel="noreferrer">
+            {link[1]}
+          </a>
         )
       }
 

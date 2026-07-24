@@ -79,7 +79,7 @@ export const PAGE = {
   title: 'Doi-Peliti Method',
   synopsis: [
     'The Doi-Peliti method[[c:1,2]] recasts the dynamics of a stochastic chemical reaction network as a single linear operator acting on a vector of configuration probabilities. Working in terms of integer molecule counts rather than continuous concentrations expresses each reaction as a product of creation and annihilation operators, and the combinatorial factors associated with indistinguishable reactants arise directly from the action of those operators.',
-    'This operator representation is also the natural point of departure for tensor-network methods. The probability vector is represented as a Matrix Product State and the generator as a Matrix Product Operator, so that a state space growing as $d^{L}$ can be stored and propagated within a controllable memory budget[[c:7]]. The builder below assembles a reaction mechanism and displays the corresponding operator form and tensor diagrams.',
+    'This operator representation is also the natural point of departure for tensor-network methods. The probability vector is represented as a [Matrix Product State](https://tensornetwork.org/mps/) and the generator as a [Matrix Product Operator](https://tensornetwork.org/mpo/), so that a state space growing as $d^{L}$ can be stored and propagated within a controllable memory budget[[c:7]]. The builder below assembles a reaction mechanism and displays the corresponding operator form and tensor diagrams.',
   ],
 }
 
@@ -220,7 +220,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
     body: [
       {
         kind: 'p',
-        text: 'Operators constructed from $a$ and $a^{\\dagger}$ are tensors, and tensor diagram notation provides a compact representation of them. In this notation a tensor is drawn as a shaded shape, and each index is a line emanating from it. The number of lines is the order of the tensor, and the number of values an index can take is its dimension; a matrix, for example, is an order-2 tensor with one incoming and one outgoing line.',
+        text: 'Operators constructed from $a$ and $a^{\\dagger}$ are [tensors](https://tensornetwork.org/tensor/), and [tensor diagram notation](https://tensornetwork.org/diagrams/) provides a compact representation of them. In this notation a tensor is drawn as a shaded shape, and each index is a line emanating from it. The number of lines is the order of the tensor, and the number of values an index can take is its dimension; a matrix, for example, is an order-2 tensor with one incoming and one outgoing line.',
       },
       { kind: 'widget', widget: 'factorFig' },
       {
@@ -289,7 +289,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'p',
-        text: 'A closely related approach applies the density-matrix renormalization group to survey the rate constants of a well-mixed network, constructing the joint distribution over correlated copy numbers as a tensor network and tracking its variation across parameter space[[c:5]]. The operator construction described here provides precisely the input required by such methods.',
+        text: 'A closely related approach applies the [density-matrix renormalization group](https://tensornetwork.org/mps/algorithms/dmrg/) to survey the rate constants of a well-mixed network, constructing the joint distribution over correlated copy numbers as a tensor network and tracking its variation across parameter space[[c:5]]. The operator construction described here provides precisely the input required by such methods.',
       },
       {
         kind: 'p',
