@@ -98,9 +98,9 @@ export const matrixToLatex = (matrix: number[][]): string => {
     // continuing rather than as a hard cap. The diagonal one is nudged up and left
     // (raisebox + negative kern) so its gap to the corner entry matches the
     // horizontal and vertical ones instead of sitting a full diagonal cell away.
-    const H = '{\\scriptstyle\\cdots}';
-    const V = '{\\scriptstyle\\vdots}';
-    const D = '\\mkern-4mu\\raisebox{0.3em}{$\\scriptstyle\\ddots$}';
+    const H = '\\mkern-5mu{\\scriptstyle\\cdots}';
+    const V = '\\raisebox{0.35em}{$\\scriptstyle\\vdots$}';
+    const D = '\\mkern-5mu\\raisebox{0.35em}{$\\scriptstyle\\ddots$}';
     const bodyRows = matrix.map(row =>
         row.map(cell => cell.toString()).concat(H).join(' & ')
     );
