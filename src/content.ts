@@ -134,11 +134,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'p',
-        text: 'A caveat on notation is warranted. The dagger is an algebraic label rather than a Hermitian conjugate. The construction borrows the symbols of second quantization, but the evolved object is a classical probability distribution rather than a quantum wave function: it is normalized so that its entries sum to one (the 1-norm), rather than so that their squares sum to one (the 2-norm of a wave function).',
-      },
-      {
-        kind: 'p',
-        text: 'The formalism itself requires no inner product: every physical quantity is a pairing of the state with a fixed dual vector, the flat state introduced in the next section, never the state paired with itself. Readers coming from quantum mechanics may note a further subtlety that can otherwise be skipped: the compression algorithms introduced later do import the Euclidean 2-norm as a working tool, and 2-norm-optimal truncation is not 1-norm-optimal, so it can leave small negative entries in the represented distribution.',
+        text: 'A caveat on notation is warranted. The dagger is an algebraic label rather than a Hermitian conjugate: the construction borrows the symbols of second quantization, but the evolved object is a classical probability distribution, normalized so that its entries sum to one (the 1-norm) rather than so that their squares do (the 2-norm of a wave function). Nothing in the formalism requires an inner product, since every physical quantity is a pairing of the state with a fixed dual vector, the flat state introduced in the next section.',
       },
       {
         kind: 'p',
@@ -186,7 +182,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'p',
-        text: 'so the mean copy number of species $i$ is $\\langle \\hat{n}_i\\rangle = \\langle 1|\\hat{n}_i|p(t)\\rangle$. This is the practical contrast with quantum mechanics, where an expectation value is a state paired with itself, $\\langle \\psi|\\hat{A}|\\psi\\rangle$; here the state is always paired with the same fixed dual vector $\\langle 1|$, and the map from $|p\\rangle$ to $\\langle A\\rangle$ is linear. The identity $\\langle 1|a^{\\dagger}=\\langle 1|$ is what makes probability conservation a one-line result once the generator is assembled below.',
+        text: 'so the mean copy number of species $i$ is $\\langle \\hat{n}_i\\rangle = \\langle 1|\\hat{n}_i|p(t)\\rangle$. This is the practical contrast with quantum mechanics, where an expectation value is a state paired with itself, $\\langle \\psi|\\hat{A}|\\psi\\rangle$; here the state is always paired with the same fixed dual vector $\\langle 1|$. The identity $\\langle 1|a^{\\dagger}=\\langle 1|$ is what makes probability conservation a one-line result once the generator is assembled below.',
       },
     ],
   },
@@ -204,7 +200,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'p',
-        text: 'The gain term $a$ removes one molecule, transferring probability from each state to the state with one fewer molecule. The loss term $a^{\\dagger}a$ is the number operator, with $a^{\\dagger}a\\left|n\\right\\rangle = n\\left|n\\right\\rangle$ counting the molecules available to decay while leaving the configuration unchanged; the minus sign removes the corresponding probability from the originating state. Probability leaves each state at exactly the rate at which it accumulates elsewhere, which is the statement of conservation.',
+        text: 'The gain term $a$ removes one molecule, transferring probability from each state to the state with one fewer molecule. The loss term $a^{\\dagger}a$ is the number operator, with $a^{\\dagger}a\\left|n\\right\\rangle = n\\left|n\\right\\rangle$ counting the molecules available to decay while leaving the configuration unchanged; the minus sign removes the corresponding probability from the originating state, so probability leaves each state at exactly the rate it accumulates elsewhere.',
       },
       {
         kind: 'p',
@@ -311,7 +307,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'p',
-        text: 'Across a given cut, $\\chi = 1$ means the distribution factorizes into independent halves, so $\\chi$ is a direct measure of the correlation the representation retains between the two sides. Readers from quantum many-body methods may note, as a skippable aside, that the correlation across a cut is here governed by the nonnegative rank, a nonnegative Matrix Product State being exactly a hidden Markov model, whereas $\\chi$ is the signed rank, which can be unboundedly smaller[[c:11]]; the negative factor entries a signed representation allows are both the source of its compression and the reason 2-norm truncation can produce small negative probabilities.',
+        text: 'Across a given cut, $\\chi = 1$ means the distribution factorizes into independent halves, so $\\chi$ is a direct measure of the correlation the representation retains between the two sides. Because the factor tensors may carry negative entries, $\\chi$ can fall well below the bond dimension a nonnegative representation would require[[c:11]]; those same negative entries are why compression in the 2-norm can leave small negative probabilities.',
       },
       {
         kind: 'p',
@@ -329,7 +325,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       { kind: 'widget', widget: 'interactiveChain' },
       {
         kind: 'p',
-        text: 'On a short chain the Matrix Product State parameter count can exceed the size of the full distribution. This is the crossover rather than a defect: a tensor network saves memory only once the chain is long enough that $(d+1)^{L}$ outgrows the parameter count, which grows linearly in $L$ at fixed bond dimension. Lengthening the chain with the first slider makes the saving appear.',
+        text: 'On a short chain the Matrix Product State parameter count can exceed the size of the full distribution. This is the crossover, not a defect: the tensor network saves memory only once the chain is long enough that $(d+1)^{L}$ outgrows the parameter count, which grows only linearly in $L$. Lengthening the chain with the first slider makes the saving appear.',
       },
     ],
   },
@@ -343,7 +339,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'p',
-        text: 'This procedure has been implemented for a reaction-diffusion chain by representing the distribution as a Matrix Product State and the generator as a Matrix Product Operator, and propagating the compressed state with the time-dependent variational principle[[c:19]]. The compression renders the extended chain tractable, while the operator representation preserves the exact accounting of probability flow, yielding the switching rate without a prescribed reaction coordinate.',
+        text: 'This procedure has been implemented for a reaction-diffusion chain by representing the distribution as a Matrix Product State and the generator as a Matrix Product Operator, and propagating the compressed state with the time-dependent variational principle[[c:19]], which yields the switching rate without a prescribed reaction coordinate.',
       },
       {
         kind: 'p',
@@ -351,7 +347,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'p',
-        text: 'The same operator-to-tensor-network route has been developed across several communities: quantized tensor trains for the chemical master equation[[c:12]], tensor-train solvers and parameter studies[[c:13,14,15]], matrix-product-state methods for driven and large-deviation dynamics[[c:16,17,18]], and the broader treatment of stochastic mechanics with the tools of quantum many-body theory[[c:10]].',
+        text: 'The same operator-to-tensor-network route has been pursued in many groups, from tensor-train solvers for the chemical master equation[[c:12,13,14,15]] to matrix-product-state methods for driven and large-deviation dynamics[[c:16,17,18]] and broader treatments of stochastic mechanics[[c:10]].',
       },
       {
         kind: 'p',
