@@ -532,8 +532,17 @@ body {
   color: #222222;
 }
 
+/* Shrink the truncation ellipses ~10% (they are the only \mathclap content in the
+ * matrix); the KaTeX build here rejects \scalebox / \htmlStyle for per-glyph sizing. */
+.matrix-tooltip-content .clap {
+  font-size: 90%;
+}
+
 .matrix-tooltip-content .katex-display {
   margin: 0 !important;
+  /* KaTeX display math defaults to overflow-x: auto, which puts a scrollbar on the
+   * small matrix; the tooltip sizes to fit it, so no scrolling is needed. */
+  overflow: visible !important;
 }
 
 /* =====================================================================

@@ -93,25 +93,26 @@ export const matrixToLatex = (matrix: number[][]): string => {
     if (!matrix || matrix.length === 0) return '';
 
     const cols = matrix[0].length;
-    const total = cols + 1;
     // A bmatrix separates columns far more than it separates rows, which makes the
     // horizontal/diagonal ellipses look much farther from the numbers than the
-    // vertical one. Use an array with a tight, uniform column gap so the horizontal
-    // spacing matches the vertical. Each ellipsis is centered in a digit-sized cell
-    // so the ellipsis cells still match the number cells.
-    const spec = '@{}' + Array(total).fill('c').join('@{\\hskip 7pt}') + '@{}';
+    // vertical one. A small negative kern on each non-first cell tightens the column
+    // gap so the horizontal spacing matches the vertical. Each ellipsis is centered
+    // in a digit-sized cell so the ellipsis cells still match the number cells.
+    const tighten = (cells: string[]) =>
+        cells.map((c, i) => (i === 0 ? c : `\\mkern-9mu ${c}`)).join(' & ');
+    // The ellipses are wrapped in \mathclap so they share the .clap class, which is
+    // scaled down ~10% in CSS (.matrix-tooltip-content .clap) since this KaTeX build
+    // rejects \scalebox / \htmlStyle for per-glyph sizing.
     const H = '\\kern0.25em\\mathclap{\\scriptstyle\\cdots}\\kern0.25em';
-    const V = '{\\scriptstyle\\vdots}';
+    const V = '\\mathclap{\\scriptstyle\\vdots}';
     const D = '\\kern0.25em\\mathclap{\\scriptstyle\\ddots}\\kern0.25em';
-    const bodyRows = matrix.map(row =>
-        row.map(cell => cell.toString()).concat(H).join(' & ')
-    );
-    const tailRow = Array(cols).fill(V).concat(D).join(' & ');
+    const bodyRows = matrix.map(row => tighten(row.map(cell => cell.toString()).concat(H)));
+    const tailRow = tighten(Array(cols).fill(V).concat(D));
     // The vertical-ellipsis glyph is taller than a digit, which would push the tail
     // row down; pull it back up so the ellipsis row sits at the number-row pitch.
-    const rows = bodyRows.join(' \\\\ ') + ' \\\\[-0.75em] ' + tailRow;
+    const rows = bodyRows.join(' \\\\ ') + ' \\\\[-0.65em] ' + tailRow;
 
-    return `\\left[\\begin{array}{${spec}}${rows}\\end{array}\\right]`;
+    return `\\begin{bmatrix} ${rows} \\end{bmatrix}`;
 };
 
 // Bosonic ladder operators on a d-dimensional occupation-number truncation.
