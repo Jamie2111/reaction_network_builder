@@ -77,7 +77,7 @@ export const PAGE = {
   title: 'Applications of Tensor Networks to Stochastic Chemical Kinetics',
   synopsis: [
     'Stochastic chemical kinetics describes a reaction network by a probability distribution over the integer copy numbers of its species, evolving under a master equation. The occupation-number representation expresses that master equation as a single linear operator acting on the vector of configuration probabilities[[c:1,2,3]]. Working in terms of integer molecule counts rather than continuous concentrations casts each reaction as a product of creation and annihilation operators, and the combinatorial factors associated with indistinguishable reactants arise directly from the action of those operators.',
-    'This operator representation is also the natural point of departure for tensor-network methods. The probability vector is represented as a [Matrix Product State](https://tensornetwork.org/mps/) and the generator as a [Matrix Product Operator](https://tensornetwork.org/mpo/), so that a state space that grows exponentially with the size of the system can be stored and propagated within a controllable memory budget[[c:9]]. No tensor-network background is assumed beyond the linked pages, and no quantum mechanics is required anywhere below; the builder assembles a reaction mechanism and displays the corresponding operator form and tensor diagrams.',
+    'This operator representation is also the natural point of departure for tensor-network methods. The probability vector is represented as a [Matrix Product State](https://tensornetwork.org/mps/) and the generator as a [Matrix Product Operator](https://tensornetwork.org/mpo/), so that a state space that grows exponentially with the size of the system can be stored and propagated within a controllable memory budget[[c:4]]. No tensor-network background is assumed beyond the linked pages, and no quantum mechanics is required anywhere below; the builder assembles a reaction mechanism and displays the corresponding operator form and tensor diagrams.',
   ],
 }
 
@@ -88,7 +88,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
     body: [
       {
         kind: 'p',
-        text: 'Deterministic chemical kinetics tracks concentrations through coupled ordinary differential equations, a description that is accurate when every species is present in large numbers and its concentration is effectively continuous. That description fails when a species is present in only tens or hundreds of copies, as is common for gene products, intracellular signaling molecules, and reactions confined to small volumes[[c:8]]. In this regime the copy number of each species is a discrete integer that changes by a whole number of molecules at each reaction event, and the timing of those events is a random process.',
+        text: 'Deterministic chemical kinetics tracks concentrations through coupled ordinary differential equations, a description that is accurate when every species is present in large numbers and its concentration is effectively continuous. That description fails when a species is present in only tens or hundreds of copies, as is common for gene products, intracellular signaling molecules, and reactions confined to small volumes[[c:5]]. In this regime the copy number of each species is a discrete integer that changes by a whole number of molecules at each reaction event, and the timing of those events is a random process.',
       },
       {
         kind: 'p',
@@ -100,7 +100,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'p',
-        text: 'The operator representation used here was introduced independently by Doi[[c:1]], by Zel\'dovich and Ovchinnikov[[c:2]], and by Grassberger and Scheunert[[c:3]]. The name Doi-Peliti properly refers to the coherent-state path integral built on this representation[[c:4,5]], which this page does not use; the construction below stays at the operator level.',
+        text: 'The operator representation used here was introduced independently by Doi[[c:1]], by Zel\'dovich and Ovchinnikov[[c:2]], and by Grassberger and Scheunert[[c:3]]. The name Doi-Peliti properly refers to the coherent-state path integral built on this representation[[c:8,9]], which this page does not use; the construction below stays at the operator level.',
       },
     ],
   },
@@ -286,7 +286,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
     body: [
       {
         kind: 'p',
-        text: 'A single well-mixed species can be treated directly. The tensor-network representation becomes valuable when the distribution is high-dimensional, whether because the network contains many chemical species whose copy numbers are correlated or because a spatially extended system is resolved into a chain of small volumes, or voxels[[c:8]]. In either case the degrees of freedom form a chain of sites, one per species or per voxel, each carrying its own occupation number.',
+        text: 'A single well-mixed species can be treated directly. The tensor-network representation becomes valuable when the distribution is high-dimensional, whether because the network contains many chemical species whose copy numbers are correlated or because a spatially extended system is resolved into a chain of small volumes, or voxels[[c:5]]. In either case the degrees of freedom form a chain of sites, one per species or per voxel, each carrying its own occupation number.',
       },
       {
         kind: 'p',
@@ -307,7 +307,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'p',
-        text: 'Across a given cut, $\\chi = 1$ means the distribution factorizes into independent halves, so $\\chi$ is a direct measure of the correlation the representation retains between the two sides. Because the factor tensors may carry negative entries, $\\chi$ can fall well below the bond dimension a nonnegative representation would require[[c:11]]; those same negative entries are why compression in the 2-norm can leave small negative probabilities.',
+        text: 'Across a given cut, $\\chi = 1$ means the distribution factorizes into independent halves, so $\\chi$ is a direct measure of the correlation the representation retains between the two sides. Because the factor tensors may carry negative entries, $\\chi$ can fall well below the bond dimension a nonnegative representation would require[[c:10]]; those same negative entries are why compression in the 2-norm can leave small negative probabilities.',
       },
       {
         kind: 'p',
@@ -316,11 +316,11 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       { kind: 'widget', widget: 'mpoFig' },
       {
         kind: 'p',
-        text: 'Time evolution then proceeds by contracting the operator network with the state network and compressing the result to a prescribed bond dimension[[c:9]]. The controls below compare the number of parameters in the tensor-network representation with the size of the full distribution as the chain length increases.',
+        text: 'Time evolution then proceeds by contracting the operator network with the state network and compressing the result to a prescribed bond dimension[[c:4]]. The controls below compare the number of parameters in the tensor-network representation with the size of the full distribution as the chain length increases.',
       },
       {
         kind: 'p',
-        text: 'Truncation is not free. On a truncated site the identity $\\langle 1|a^{\\dagger} = \\langle 1|$ acquires a boundary term, because creation from the top retained state leaves the space, so a naive hard cut-off leaks probability and $\\langle 1|\\mathbb{W} \\ne 0$ exactly. There are two honest responses. The pragmatic one is to choose $d$ generously, so that the distribution carries negligible weight near the cap, and to monitor $\\langle 1|p\\rangle$ over time as a diagnostic. The principled one is to zero the rate of every reaction step that would carry a configuration past the cap, removing that step\'s gain and loss together; this restores exact conservation on the finite space, at the price of a boundary term in the commutation relations of the truncated operators[[c:15]].',
+        text: 'Truncation is not free. On a truncated site the identity $\\langle 1|a^{\\dagger} = \\langle 1|$ acquires a boundary term, because creation from the top retained state leaves the space, so a naive hard cut-off leaks probability and $\\langle 1|\\mathbb{W} \\ne 0$ exactly. There are two honest responses. The pragmatic one is to choose $d$ generously, so that the distribution carries negligible weight near the cap, and to monitor $\\langle 1|p\\rangle$ over time as a diagnostic. The principled one is to zero the rate of every reaction step that would carry a configuration past the cap, removing that step\'s gain and loss together; this restores exact conservation on the finite space, at the price of a boundary term in the commutation relations of the truncated operators[[c:11]].',
       },
       { kind: 'widget', widget: 'interactiveChain' },
       {
@@ -339,15 +339,15 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'p',
-        text: 'This procedure has been implemented for a reaction-diffusion chain by representing the distribution as a Matrix Product State and the generator as a Matrix Product Operator, and propagating the compressed state with the time-dependent variational principle[[c:15]], which yields the switching rate without a prescribed reaction coordinate.',
+        text: 'This procedure has been implemented for a reaction-diffusion chain by representing the distribution as a Matrix Product State and the generator as a Matrix Product Operator, and propagating the compressed state with the time-dependent variational principle[[c:11]], which yields the switching rate without a prescribed reaction coordinate.',
       },
       {
         kind: 'p',
-        text: 'A closely related approach applies the [density-matrix renormalization group](https://tensornetwork.org/mps/algorithms/dmrg/) to survey the rate constants of a well-mixed network, constructing the joint distribution over correlated copy numbers as a tensor network and tracking its variation across parameter space[[c:16]].',
+        text: 'A closely related approach applies the [density-matrix renormalization group](https://tensornetwork.org/mps/algorithms/dmrg/) to survey the rate constants of a well-mixed network, constructing the joint distribution over correlated copy numbers as a tensor network and tracking its variation across parameter space[[c:12]].',
       },
       {
         kind: 'p',
-        text: 'The same operator-to-tensor-network route has been pursued in many groups, from tensor-train solvers for the chemical master equation[[c:12,13]] to matrix-product-state methods for driven and large-deviation dynamics[[c:14]] and broader treatments of stochastic mechanics[[c:10]].',
+        text: 'The same operator-to-tensor-network route has been pursued in many groups, from tensor-train solvers for the chemical master equation[[c:13,14]] to matrix-product-state methods for driven and large-deviation dynamics[[c:15]] and broader treatments of stochastic mechanics[[c:16]].',
       },
       {
         kind: 'p',
@@ -376,15 +376,15 @@ export const REFERENCES: Reference[] = [
   },
   {
     n: 4,
-    text: 'L. Peliti, "Path Integral Approach to Birth-Death Processes on a Lattice," Journal de Physique 46, 1469 (1985).',
-    href: 'https://doi.org/10.1051/jphys:019850046090146900',
-    hrefLabel: 'doi:10.1051/jphys:019850046090146900',
+    text: 'U. Schollwöck, "The Density-Matrix Renormalization Group in the Age of Matrix Product States," Annals of Physics 326, 96 (2011).',
+    href: 'https://doi.org/10.1016/j.aop.2010.09.012',
+    hrefLabel: 'doi:10.1016/j.aop.2010.09.012',
   },
   {
     n: 5,
-    text: 'U. C. Täuber, M. Howard, and B. P. Vollmayr-Lee, "Applications of field-theoretic renormalization group methods to reaction-diffusion problems," Journal of Physics A: Mathematical and General 38, R79 (2005).',
-    href: 'https://doi.org/10.1088/0305-4470/38/17/R01',
-    hrefLabel: 'doi:10.1088/0305-4470/38/17/R01',
+    text: 'R. Erban and S. J. Chapman, Stochastic Modelling of Reaction-Diffusion Processes (Cambridge University Press, 2020).',
+    href: 'https://www.cambridge.org/9781108498128',
+    hrefLabel: 'Cambridge University Press',
   },
   {
     n: 6,
@@ -398,56 +398,56 @@ export const REFERENCES: Reference[] = [
   },
   {
     n: 8,
-    text: 'R. Erban and S. J. Chapman, Stochastic Modelling of Reaction-Diffusion Processes (Cambridge University Press, 2020).',
-    href: 'https://www.cambridge.org/9781108498128',
-    hrefLabel: 'Cambridge University Press',
+    text: 'L. Peliti, "Path Integral Approach to Birth-Death Processes on a Lattice," Journal de Physique 46, 1469 (1985).',
+    href: 'https://doi.org/10.1051/jphys:019850046090146900',
+    hrefLabel: 'doi:10.1051/jphys:019850046090146900',
   },
   {
     n: 9,
-    text: 'U. Schollwöck, "The Density-Matrix Renormalization Group in the Age of Matrix Product States," Annals of Physics 326, 96 (2011).',
-    href: 'https://doi.org/10.1016/j.aop.2010.09.012',
-    hrefLabel: 'doi:10.1016/j.aop.2010.09.012',
+    text: 'U. C. Täuber, M. Howard, and B. P. Vollmayr-Lee, "Applications of field-theoretic renormalization group methods to reaction-diffusion problems," Journal of Physics A: Mathematical and General 38, R79 (2005).',
+    href: 'https://doi.org/10.1088/0305-4470/38/17/R01',
+    hrefLabel: 'doi:10.1088/0305-4470/38/17/R01',
   },
   {
     n: 10,
-    text: 'J. C. Baez and J. Biamonte, Quantum Techniques for Stochastic Mechanics (World Scientific, 2018).',
-    href: 'https://doi.org/10.1142/10623',
-    hrefLabel: 'doi:10.1142/10623',
-  },
-  {
-    n: 11,
     text: 'I. Glasser, R. Sweke, N. Pancotti, J. Eisert, and J. I. Cirac, "Expressive power of tensor-network factorizations for probabilistic modeling," Advances in Neural Information Processing Systems 32 (2019).',
     href: 'https://arxiv.org/abs/1907.03741',
     hrefLabel: 'arXiv:1907.03741',
   },
   {
-    n: 12,
-    text: 'V. Kazeev, M. Khammash, M. Nip, and C. Schwab, "Direct Solution of the Chemical Master Equation Using Quantized Tensor Trains," PLoS Computational Biology 10, e1003359 (2014).',
-    href: 'https://doi.org/10.1371/journal.pcbi.1003359',
-    hrefLabel: 'doi:10.1371/journal.pcbi.1003359',
-  },
-  {
-    n: 13,
-    text: 'P. Gelß, S. Matera, and C. Schütte, "Solving the master equation without kinetic Monte Carlo: Tensor train approximations for a CO oxidation model," Journal of Computational Physics 314, 489 (2016).',
-    href: 'https://doi.org/10.1016/j.jcp.2016.03.025',
-    hrefLabel: 'doi:10.1016/j.jcp.2016.03.025',
-  },
-  {
-    n: 14,
-    text: 'M. C. Bañuls and J. P. Garrahan, "Using Matrix Product States to Study the Dynamical Large Deviations of Kinetically Constrained Models," Physical Review Letters 123, 200601 (2019).',
-    href: 'https://doi.org/10.1103/PhysRevLett.123.200601',
-    hrefLabel: 'doi:10.1103/PhysRevLett.123.200601',
-  },
-  {
-    n: 15,
+    n: 11,
     text: 'S. B. Nicholson and T. R. Gingrich, "Quantifying Rare Events in Stochastic Reaction-Diffusion Dynamics Using Tensor Networks," Physical Review X 13, 041006 (2023).',
     href: 'https://doi.org/10.1103/PhysRevX.13.041006',
     hrefLabel: 'doi:10.1103/PhysRevX.13.041006',
   },
   {
-    n: 16,
+    n: 12,
     text: 'J. P. Zima, S. B. Nicholson, and T. R. Gingrich, "Chemical master equation parameter exploration using DMRG," Journal of Chemical Physics 163, 054118 (2025).',
     href: 'https://doi.org/10.1063/5.0276591',
     hrefLabel: 'doi:10.1063/5.0276591',
+  },
+  {
+    n: 13,
+    text: 'V. Kazeev, M. Khammash, M. Nip, and C. Schwab, "Direct Solution of the Chemical Master Equation Using Quantized Tensor Trains," PLoS Computational Biology 10, e1003359 (2014).',
+    href: 'https://doi.org/10.1371/journal.pcbi.1003359',
+    hrefLabel: 'doi:10.1371/journal.pcbi.1003359',
+  },
+  {
+    n: 14,
+    text: 'P. Gelß, S. Matera, and C. Schütte, "Solving the master equation without kinetic Monte Carlo: Tensor train approximations for a CO oxidation model," Journal of Computational Physics 314, 489 (2016).',
+    href: 'https://doi.org/10.1016/j.jcp.2016.03.025',
+    hrefLabel: 'doi:10.1016/j.jcp.2016.03.025',
+  },
+  {
+    n: 15,
+    text: 'M. C. Bañuls and J. P. Garrahan, "Using Matrix Product States to Study the Dynamical Large Deviations of Kinetically Constrained Models," Physical Review Letters 123, 200601 (2019).',
+    href: 'https://doi.org/10.1103/PhysRevLett.123.200601',
+    hrefLabel: 'doi:10.1103/PhysRevLett.123.200601',
+  },
+  {
+    n: 16,
+    text: 'J. C. Baez and J. Biamonte, Quantum Techniques for Stochastic Mechanics (World Scientific, 2018).',
+    href: 'https://doi.org/10.1142/10623',
+    hrefLabel: 'doi:10.1142/10623',
   },
 ]
