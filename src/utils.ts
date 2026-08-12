@@ -99,7 +99,7 @@ export const matrixToLatex = (matrix: number[][]): string => {
     // gap so the horizontal spacing matches the vertical. Each ellipsis is centered
     // in a digit-sized cell so the ellipsis cells still match the number cells.
     const tighten = (cells: string[]) =>
-        cells.map((c, i) => (i === 0 ? c : `\\mkern-9mu ${c}`)).join(' & ');
+        cells.map((c, i) => (i === 0 ? c : `\\mkern-7mu ${c}`)).join(' & ');
     // The ellipses are wrapped in \mathclap so they share the .clap class, which is
     // scaled down ~10% in CSS (.matrix-tooltip-content .clap) since this KaTeX build
     // rejects \scalebox / \htmlStyle for per-glyph sizing.
