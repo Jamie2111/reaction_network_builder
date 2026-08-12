@@ -94,17 +94,14 @@ export const matrixToLatex = (matrix: number[][]): string => {
 
     const cols = matrix[0].length;
     // The operators act on the full (infinite) occupation-number ladder; this is a
-    // truncated block. Trail each row/column with small ellipses so it reads as
-    // continuing rather than as a hard cap. The diagonal one is nudged up and left
-    // (raisebox + negative kern) so its gap to the corner entry matches the
-    // horizontal and vertical ones instead of sitting a full diagonal cell away.
-    const H = '\\mkern-5mu{\\scriptstyle\\cdots}';
-    const V = '\\raisebox{0.35em}{$\\scriptstyle\\vdots$}';
-    const D = '\\mkern-5mu\\raisebox{0.35em}{$\\scriptstyle\\ddots$}';
+    // truncated block. Close each row/column with the standard matrix ellipses so it
+    // reads as continuing rather than as a hard cap. The overall tooltip is scaled
+    // down in CSS (.matrix-tooltip-content) rather than per-cell, so the numbers and
+    // ellipses stay on the same grid.
     const bodyRows = matrix.map(row =>
-        row.map(cell => cell.toString()).concat(H).join(' & ')
+        row.map(cell => cell.toString()).concat('\\cdots').join(' & ')
     );
-    const tailRow = Array(cols).fill(V).concat(D).join(' & ');
+    const tailRow = Array(cols).fill('\\vdots').concat('\\ddots').join(' & ');
     const rows = bodyRows.concat(tailRow).join(' \\\\ ');
 
     return `\\begin{bmatrix} ${rows} \\end{bmatrix}`;
