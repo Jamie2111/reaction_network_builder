@@ -444,7 +444,7 @@ function App() {
               <tr>
                 <td></td>
                 <td className="backlinks">
-                  <a href="https://tensornetwork.org/">main</a>/occupation_number/
+                  <a href="https://tensornetwork.org/">main</a>/stoch_kin/
                 </td>
               </tr>
             </tbody>
