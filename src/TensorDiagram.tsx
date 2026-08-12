@@ -131,7 +131,7 @@ export const MPSFigure: React.FC<{ sites?: number }> = ({ sites = 5 }) => {
       caption={
         <>
           A <b>Matrix Product State</b> for the probability vector{' '}
-          <span className="td-inline-math">|p(t)&rang;</span>. Each factor tensor carries a vertical{' '}
+          <LatexRenderer latex={String.raw`\lvert p(t)\rangle`} displayMode={false} className="td-inline-math" />. Each factor tensor carries a vertical{' '}
           <b>external index</b> (a local occupation number) and is connected to its neighbors by horizontal{' '}
           <b>internal</b> (bond) <b>indices</b>.
         </>
@@ -228,8 +228,10 @@ export const LiveOperatorDiagram: React.FC<{ step: RawElementaryStep }> = ({ ste
       caption={
         <>
           The current step represented as a generator term acting on the occupation line of each species. A
-          shaded box is a creation operator <span className="td-inline-math">a&#8224;</span>, and an open box is
-          an annihilation operator <span className="td-inline-math">a</span>; the exponent gives the number of
+          shaded box is a creation operator{' '}
+          <LatexRenderer latex={String.raw`a^{\dagger}`} displayMode={false} className="td-inline-math" />, and an
+          open box is an annihilation operator{' '}
+          <LatexRenderer latex="a" displayMode={false} className="td-inline-math" />; the exponent gives the number of
           molecules created or removed. The two external lines on each row are the incoming and outgoing
           occupation indices.
         </>
@@ -310,11 +312,11 @@ export const InteractiveChainDiagram: React.FC<{ seedSites?: number }> = ({ seed
         viewBox={`0 0 ${svgW} 120`}
         caption={
           <>
-            The probability vector <span className="td-inline-math">|p(t)&rang;</span> represented as a Matrix
+            The probability vector <LatexRenderer latex={String.raw`\lvert p(t)\rangle`} displayMode={false} className="td-inline-math" /> represented as a Matrix
             Product State on <b>{sites}</b> sites. Vertical lines are external indices (local occupation with
-            cut-off <span className="td-inline-math">d&nbsp;=&nbsp;{trunc}</span>, i.e.{' '}
-            <span className="td-inline-math">d&#8202;+&#8202;1&nbsp;=&nbsp;{dim}</span> states); horizontal lines
-            are internal bond indices of dimension <span className="td-inline-math">&chi;&nbsp;=&nbsp;{chi}</span>.
+            cut-off <LatexRenderer latex={`d = ${trunc}`} displayMode={false} className="td-inline-math" />, i.e.{' '}
+            <LatexRenderer latex={`d + 1 = ${dim}`} displayMode={false} className="td-inline-math" /> states); horizontal lines
+            are internal bond indices of dimension <LatexRenderer latex={`\\chi = ${chi}`} displayMode={false} className="td-inline-math" />.
           </>
         }
       >
