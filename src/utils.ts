@@ -92,9 +92,16 @@ const matMul = (a: number[][], b: number[][]): number[][] => {
 export const matrixToLatex = (matrix: number[][]): string => {
     if (!matrix || matrix.length === 0) return '';
 
-    const rows = matrix.map(row =>
-        row.map(cell => cell.toString()).join(' & ')
-    ).join(' \\\\ ');
+    const cols = matrix[0].length;
+    // The operators act on the full (infinite) occupation-number ladder; this is a
+    // truncated block. Trail each row with a horizontal ellipsis, then close with a
+    // row of vertical ellipses and a diagonal one, so the matrix reads as continuing
+    // rather than as a hard cap.
+    const bodyRows = matrix.map(row =>
+        row.map(cell => cell.toString()).concat('\\cdots').join(' & ')
+    );
+    const tailRow = Array(cols).fill('\\vdots').concat('\\ddots').join(' & ');
+    const rows = bodyRows.concat(tailRow).join(' \\\\ ');
 
     return `\\begin{bmatrix} ${rows} \\end{bmatrix}`;
 };
