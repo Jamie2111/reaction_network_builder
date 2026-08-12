@@ -134,7 +134,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'p',
-        text: 'A caveat on notation is warranted. The dagger is an algebraic label rather than a Hermitian conjugate: the construction borrows the symbols of second quantization, but the evolved object is a classical probability distribution, normalized so that its entries sum to one (the 1-norm) rather than so that their squares do (the 2-norm of a wave function). Nothing in the formalism requires an inner product, since every physical quantity is a pairing of the state with a fixed dual vector, the flat state introduced in the next section.',
+        text: 'A caveat on notation is warranted. The dagger is an algebraic label rather than a Hermitian conjugate: the construction borrows the symbols of second quantization, but the evolved object is a classical probability distribution, normalized so that its entries sum to one (the 1-norm) rather than so that their squares do (the 2-norm of a wave function).',
       },
       {
         kind: 'p',
