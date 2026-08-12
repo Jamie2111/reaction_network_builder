@@ -320,7 +320,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'p',
-        text: 'Truncation is not free. On a truncated site the identity $\\langle 1|a^{\\dagger} = \\langle 1|$ acquires a boundary term, because creation from the top retained state leaves the space, so a naive hard cut-off leaks probability and $\\langle 1|\\mathbb{W} \\ne 0$ exactly. There are two honest responses. The pragmatic one is to choose $d$ generously, so that the distribution carries negligible weight near the cap, and to monitor $\\langle 1|p\\rangle$ over time as a diagnostic. The principled one is to zero the rate of every reaction step that would carry a configuration past the cap, removing that step\'s gain and loss together; this restores exact conservation on the finite space, at the price of a boundary term in the commutation relations of the truncated operators[[c:19]].',
+        text: 'Truncation is not free. On a truncated site the identity $\\langle 1|a^{\\dagger} = \\langle 1|$ acquires a boundary term, because creation from the top retained state leaves the space, so a naive hard cut-off leaks probability and $\\langle 1|\\mathbb{W} \\ne 0$ exactly. There are two honest responses. The pragmatic one is to choose $d$ generously, so that the distribution carries negligible weight near the cap, and to monitor $\\langle 1|p\\rangle$ over time as a diagnostic. The principled one is to zero the rate of every reaction step that would carry a configuration past the cap, removing that step\'s gain and loss together; this restores exact conservation on the finite space, at the price of a boundary term in the commutation relations of the truncated operators[[c:15]].',
       },
       { kind: 'widget', widget: 'interactiveChain' },
       {
@@ -339,15 +339,15 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'p',
-        text: 'This procedure has been implemented for a reaction-diffusion chain by representing the distribution as a Matrix Product State and the generator as a Matrix Product Operator, and propagating the compressed state with the time-dependent variational principle[[c:19]], which yields the switching rate without a prescribed reaction coordinate.',
+        text: 'This procedure has been implemented for a reaction-diffusion chain by representing the distribution as a Matrix Product State and the generator as a Matrix Product Operator, and propagating the compressed state with the time-dependent variational principle[[c:15]], which yields the switching rate without a prescribed reaction coordinate.',
       },
       {
         kind: 'p',
-        text: 'A closely related approach applies the [density-matrix renormalization group](https://tensornetwork.org/mps/algorithms/dmrg/) to survey the rate constants of a well-mixed network, constructing the joint distribution over correlated copy numbers as a tensor network and tracking its variation across parameter space[[c:20]].',
+        text: 'A closely related approach applies the [density-matrix renormalization group](https://tensornetwork.org/mps/algorithms/dmrg/) to survey the rate constants of a well-mixed network, constructing the joint distribution over correlated copy numbers as a tensor network and tracking its variation across parameter space[[c:16]].',
       },
       {
         kind: 'p',
-        text: 'The same operator-to-tensor-network route has been pursued in many groups, from tensor-train solvers for the chemical master equation[[c:12,13,14,15]] to matrix-product-state methods for driven and large-deviation dynamics[[c:16,17,18]] and broader treatments of stochastic mechanics[[c:10]].',
+        text: 'The same operator-to-tensor-network route has been pursued in many groups, from tensor-train solvers for the chemical master equation[[c:12,13]] to matrix-product-state methods for driven and large-deviation dynamics[[c:14]] and broader treatments of stochastic mechanics[[c:10]].',
       },
       {
         kind: 'p',
@@ -434,42 +434,18 @@ export const REFERENCES: Reference[] = [
   },
   {
     n: 14,
-    text: 'S. V. Dolgov and B. N. Khoromskij, "Simultaneous state-time approximation of the chemical master equation using tensor product formats," Numerical Linear Algebra with Applications 22, 197 (2015).',
-    href: 'https://doi.org/10.1002/nla.1942',
-    hrefLabel: 'doi:10.1002/nla.1942',
-  },
-  {
-    n: 15,
-    text: 'S. Liao, T. Vejchodský, and R. Erban, "Tensor methods for parameter estimation and bifurcation analysis of stochastic reaction networks," Journal of the Royal Society Interface 12, 20150233 (2015).',
-    href: 'https://doi.org/10.1098/rsif.2015.0233',
-    hrefLabel: 'doi:10.1098/rsif.2015.0233',
-  },
-  {
-    n: 16,
     text: 'M. C. Bañuls and J. P. Garrahan, "Using Matrix Product States to Study the Dynamical Large Deviations of Kinetically Constrained Models," Physical Review Letters 123, 200601 (2019).',
     href: 'https://doi.org/10.1103/PhysRevLett.123.200601',
     hrefLabel: 'doi:10.1103/PhysRevLett.123.200601',
   },
   {
-    n: 17,
-    text: 'L. Causer, M. C. Bañuls, and J. P. Garrahan, "Optimal sampling of dynamical large deviations via matrix product states," Physical Review E 103, 062144 (2021).',
-    href: 'https://doi.org/10.1103/PhysRevE.103.062144',
-    hrefLabel: 'doi:10.1103/PhysRevE.103.062144',
-  },
-  {
-    n: 18,
-    text: 'P. Helms, U. Ray, and G. K.-L. Chan, "Dynamical phase behavior of the single- and multi-lane asymmetric simple exclusion process via matrix product states," Physical Review E 100, 022101 (2019).',
-    href: 'https://doi.org/10.1103/PhysRevE.100.022101',
-    hrefLabel: 'doi:10.1103/PhysRevE.100.022101',
-  },
-  {
-    n: 19,
+    n: 15,
     text: 'S. B. Nicholson and T. R. Gingrich, "Quantifying Rare Events in Stochastic Reaction-Diffusion Dynamics Using Tensor Networks," Physical Review X 13, 041006 (2023).',
     href: 'https://doi.org/10.1103/PhysRevX.13.041006',
     hrefLabel: 'doi:10.1103/PhysRevX.13.041006',
   },
   {
-    n: 20,
+    n: 16,
     text: 'J. P. Zima, S. B. Nicholson, and T. R. Gingrich, "Chemical master equation parameter exploration using DMRG," Journal of Chemical Physics 163, 054118 (2025).',
     href: 'https://doi.org/10.1063/5.0276591',
     hrefLabel: 'doi:10.1063/5.0276591',
