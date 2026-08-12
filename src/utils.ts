@@ -94,13 +94,17 @@ export const matrixToLatex = (matrix: number[][]): string => {
 
     const cols = matrix[0].length;
     // The operators act on the full (infinite) occupation-number ladder; this is a
-    // truncated block. Trail each row with a horizontal ellipsis, then close with a
-    // row of vertical ellipses and a diagonal one, so the matrix reads as continuing
-    // rather than as a hard cap.
+    // truncated block. Trail each row/column with small ellipses so it reads as
+    // continuing rather than as a hard cap. The diagonal one is nudged up and left
+    // (raisebox + negative kern) so its gap to the corner entry matches the
+    // horizontal and vertical ones instead of sitting a full diagonal cell away.
+    const H = '{\\scriptstyle\\cdots}';
+    const V = '{\\scriptstyle\\vdots}';
+    const D = '\\mkern-4mu\\raisebox{0.3em}{$\\scriptstyle\\ddots$}';
     const bodyRows = matrix.map(row =>
-        row.map(cell => cell.toString()).concat('\\cdots').join(' & ')
+        row.map(cell => cell.toString()).concat(H).join(' & ')
     );
-    const tailRow = Array(cols).fill('\\vdots').concat('\\ddots').join(' & ');
+    const tailRow = Array(cols).fill(V).concat(D).join(' & ');
     const rows = bodyRows.concat(tailRow).join(' \\\\ ');
 
     return `\\begin{bmatrix} ${rows} \\end{bmatrix}`;
