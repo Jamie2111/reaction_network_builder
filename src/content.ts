@@ -11,8 +11,6 @@ export type SectionWidget =
   | 'builder'
   | 'liveOperator'
   | 'interactiveChain'
-  | 'factorFig'
-  | 'contractionFig'
   | 'mpsFig'
   | 'mpoFig'
 
@@ -76,10 +74,10 @@ export const GTS_PRESET: Omit<RawElementaryStep, 'id'>[] = [
 ]
 
 export const PAGE = {
-  title: 'Doi-Peliti Method',
+  title: 'Occupation-Number Representation of Stochastic Kinetics',
   synopsis: [
-    'The Doi-Peliti method[[c:1,2]] recasts the dynamics of a stochastic chemical reaction network as a single linear operator acting on a vector of configuration probabilities. Working in terms of integer molecule counts rather than continuous concentrations expresses each reaction as a product of creation and annihilation operators, and the combinatorial factors associated with indistinguishable reactants arise directly from the action of those operators.',
-    'This operator representation is also the natural point of departure for tensor-network methods. The probability vector is represented as a [Matrix Product State](https://tensornetwork.org/mps/) and the generator as a [Matrix Product Operator](https://tensornetwork.org/mpo/), so that a state space growing as $d^{L}$ can be stored and propagated within a controllable memory budget[[c:7]]. The builder below assembles a reaction mechanism and displays the corresponding operator form and tensor diagrams.',
+    'The occupation-number representation represents the dynamics of a stochastic chemical reaction network as a single linear operator acting on a vector of configuration probabilities[[c:1,2,3]]. Working in terms of integer molecule counts rather than continuous concentrations expresses each reaction as a product of creation and annihilation operators, and the combinatorial factors associated with indistinguishable reactants arise directly from the action of those operators.',
+    'This operator representation is also the natural point of departure for tensor-network methods. The probability vector is represented as a [Matrix Product State](https://tensornetwork.org/mps/) and the generator as a [Matrix Product Operator](https://tensornetwork.org/mpo/), so that a state space growing as $(d+1)^{L}$ can be stored and propagated within a controllable memory budget[[c:9]]. No tensor-network background is assumed beyond the linked pages, and no quantum mechanics is required anywhere below; the builder assembles a reaction mechanism and displays the corresponding operator form and tensor diagrams.',
   ],
 }
 
@@ -90,15 +88,19 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
     body: [
       {
         kind: 'p',
-        text: 'Deterministic chemical kinetics tracks concentrations through coupled ordinary differential equations, a description that is accurate when every species is present in large numbers and its concentration is effectively continuous. That description fails when a species is present in only tens or hundreds of copies, as is common for gene products, intracellular signaling molecules, and reactions confined to small volumes. In this regime the copy number of each species is a discrete integer that changes by a whole number of molecules at each reaction event, and the timing of those events is a random process.',
+        text: 'Deterministic chemical kinetics tracks concentrations through coupled ordinary differential equations, a description that is accurate when every species is present in large numbers and its concentration is effectively continuous. That description fails when a species is present in only tens or hundreds of copies, as is common for gene products, intracellular signaling molecules, and reactions confined to small volumes[[c:8]]. In this regime the copy number of each species is a discrete integer that changes by a whole number of molecules at each reaction event, and the timing of those events is a random process.',
       },
       {
         kind: 'p',
-        text: 'The appropriate description is then a probability distribution over integer copy numbers. Writing $\\mathbf{n}$ for the vector of copy numbers of each species, $p(\\mathbf{n}, t)$ denotes the probability of configuration $\\mathbf{n}$ at time $t$, and its evolution obeys the chemical master equation[[c:3]], a linear rate equation with one term per reaction. The master equation is readily written but difficult to solve, since the number of accessible configurations grows combinatorially with the number of species[[c:4]].',
+        text: 'The appropriate description is then a probability distribution over integer copy numbers. Writing $\\mathbf{n}$ for the vector of copy numbers of each species, $p(\\mathbf{n}, t)$ denotes the probability of configuration $\\mathbf{n}$ at time $t$, and its evolution obeys the chemical master equation[[c:6]], a linear rate equation with one term per reaction. The master equation is readily written but difficult to solve, since the number of accessible configurations grows combinatorially with the number of species[[c:7]].',
       },
       {
         kind: 'p',
-        text: 'The Doi-Peliti method does not alter the underlying physics. It re-expresses the same master equation in an operator language that exposes its algebraic structure and, in particular, renders it amenable to tensor-network representation.',
+        text: 'The occupation-number representation does not alter the underlying physics. It re-expresses the same master equation in an operator language that exposes its algebraic structure and, in particular, renders it amenable to tensor-network representation.',
+      },
+      {
+        kind: 'p',
+        text: 'The operator representation used here was introduced independently by Doi[[c:1]], by Zel\'dovich and Ovchinnikov[[c:2]], and by Grassberger and Scheunert[[c:3]]. The name Doi-Peliti properly refers to the coherent-state path integral built on this representation[[c:4,5]], which this page does not use; the construction below stays at the operator level.',
       },
     ],
   },
@@ -124,7 +126,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'p',
-        text: 'Combinatorial factors therefore arise automatically. A step that consumes two molecules of the same species acquires the factor $n(n-1)$ directly from the operator algebra, with no binomial coefficient introduced by hand,',
+        text: 'Combinatorial factors therefore arise automatically. A step that consumes two molecules of the same species acquires the factor $n(n-1)$ directly from the action of those operators, with no binomial coefficient introduced by hand,',
       },
       {
         kind: 'eq',
@@ -132,14 +134,60 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'p',
-        text: 'A caveat on notation is warranted. The dagger is an algebraic label rather than a Hermitian conjugate. The Doi-Peliti construction borrows the symbols of second quantization, but the evolved object is a classical probability distribution rather than a quantum wave function, normalized in the 1-norm (its entries sum to one) rather than the 2-norm.',
+        text: 'A caveat on notation is warranted. The dagger is an algebraic label rather than a Hermitian conjugate. The construction borrows the symbols of second quantization, but the evolved object is a classical probability distribution rather than a quantum wave function: it is normalized so that its entries sum to one (the 1-norm), rather than so that their squares sum to one (the 2-norm of a wave function).',
       },
       {
         kind: 'p',
-        text: 'The builder below assembles elementary steps and displays each reaction as a balanced equation together with its generated operator term; hovering over an operator reveals the truncated matrix it represents. The preset loads the reversible Schlogl model, a standard test case for stochastic bistability and switching.',
+        text: 'The formalism itself requires no inner product: every physical quantity is a pairing of the state with a fixed dual vector, the flat state introduced in the next section, never the state paired with itself. Readers coming from quantum mechanics may note a further subtlety that can otherwise be skipped: the compression algorithms introduced later do import the Euclidean 2-norm as a working tool, and 2-norm-optimal truncation is not 1-norm-optimal, so it can leave small negative entries in the represented distribution.',
+      },
+      {
+        kind: 'p',
+        text: 'The builder below assembles elementary steps and displays each reaction as a balanced equation together with its generated operator term; hovering over an operator reveals the truncated matrix it represents. Load a preset with the two buttons, the reversible Schlögl model or a seven-species gene toggle switch, or clear the mechanism and build your own.',
       },
       { kind: 'widget', widget: 'builder' },
       { kind: 'widget', widget: 'liveOperator' },
+    ],
+  },
+  {
+    id: 'flat-state',
+    title: 'The flat state and observables',
+    body: [
+      {
+        kind: 'p',
+        text: 'Probabilities are read out of the state by a single fixed covector, the flat state (or sum state),',
+      },
+      {
+        kind: 'eq',
+        latex: String.raw`\langle 1| = \sum_{\mathbf{n}} \langle \mathbf{n}| .`,
+      },
+      {
+        kind: 'p',
+        text: 'Its defining property is that creation is invisible to it,',
+      },
+      {
+        kind: 'eq',
+        latex: String.raw`\langle 1|\, a^{\dagger} = \langle 1| ,`,
+      },
+      {
+        kind: 'p',
+        text: 'because $\\langle 1|a^{\\dagger}|n\\rangle = \\langle 1|n+1\\rangle = 1 = \\langle 1|n\\rangle$ for every $n$. Pairing the flat state with the probability vector returns total probability, which is the normalization condition,',
+      },
+      {
+        kind: 'eq',
+        latex: String.raw`\langle 1 | p(t)\rangle = \sum_{\mathbf{n}} p(\mathbf{n},t) = 1 .`,
+      },
+      {
+        kind: 'p',
+        text: 'Averages are pairings as well: for an observable that is a function of the copy numbers, represented by a diagonal operator $\\hat{A}$, the expectation value is',
+      },
+      {
+        kind: 'eq',
+        latex: String.raw`\langle A \rangle_t = \langle 1|\, \hat{A}\, \left|p(t)\right\rangle ,`,
+      },
+      {
+        kind: 'p',
+        text: 'so the mean copy number of species $i$ is $\\langle \\hat{n}_i\\rangle = \\langle 1|\\hat{n}_i|p(t)\\rangle$. This is the practical contrast with quantum mechanics, where an expectation value is a state paired with itself, $\\langle \\psi|\\hat{A}|\\psi\\rangle$; here the state is always paired with the same fixed dual vector $\\langle 1|$, and the map from $|p\\rangle$ to $\\langle A\\rangle$ is linear. The identity $\\langle 1|a^{\\dagger}=\\langle 1|$ is what makes probability conservation a one-line result once the generator is assembled below.',
+      },
     ],
   },
   {
@@ -152,7 +200,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'eq',
-        latex: String.raw`\hat{H}_{A\to\varnothing} = k\left(a - a^\dagger a\right) .`,
+        latex: String.raw`\mathbb{W}_{A\to\varnothing} = k\left(a - a^\dagger a\right) .`,
       },
       {
         kind: 'p',
@@ -164,7 +212,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'eq',
-        latex: String.raw`\hat{H}_{2A\to B} = k\left(b^\dagger a^2 - a^{\dagger 2} a^2\right) .`,
+        latex: String.raw`\mathbb{W}_{2A\to B} = k\left(b^\dagger a^2 - a^{\dagger 2} a^2\right) .`,
       },
       {
         kind: 'p',
@@ -172,7 +220,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'p',
-        text: 'The forward Schlogl step, $2X + A \\to 3X$, follows the same construction with additional species. Factoring out the annihilation of the reactants exposes the structure,',
+        text: 'The forward Schlögl step, $2X + A \\to 3X$, follows the same construction with additional species. Factoring out the annihilation of the reactants exposes the structure,',
       },
       {
         kind: 'eq',
@@ -184,7 +232,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'eq',
-        latex: String.raw`\hat{H} = k\left(\prod_i \left(a_i^\dagger\right)^{\mu_i} - \prod_i \left(a_i^\dagger\right)^{\eta_i}\right)\prod_i a_i^{\eta_i} .`,
+        latex: String.raw`\mathbb{W} = k\left(\prod_i \left(a_i^\dagger\right)^{\mu_i} - \prod_i \left(a_i^\dagger\right)^{\eta_i}\right)\prod_i a_i^{\eta_i} .`,
       },
       {
         kind: 'p',
@@ -198,47 +246,41 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
     body: [
       {
         kind: 'p',
-        text: 'A reaction mechanism comprises several elementary reactions, and its generator $\\hat{H}$ is the sum of the operator terms of the individual steps, so the mechanism assembled in the builder corresponds to a single matrix. Because each term is constructed as gain minus loss, the sum conserves total probability.',
+        text: 'A reaction mechanism comprises several elementary reactions, and its generator $\\mathbb{W}$ is the sum of the operator terms of the individual steps, so the mechanism assembled in the builder corresponds to a single matrix.',
       },
       {
         kind: 'p',
-        text: 'This generator specifies the full dynamics. The distribution evolves under a single linear equation whose formal solution is a matrix exponential, so that the entire time evolution is determined by $\\hat{H}$ and the initial condition,',
+        text: 'The distribution evolves under a single linear equation, with no minus sign and no factor of $i$, in contrast to the Schrödinger equation,',
       },
       {
         kind: 'eq',
-        latex: String.raw`\frac{d}{dt}\left|p(t)\right\rangle = \hat{H}\left|p(t)\right\rangle , \qquad \left|p(t)\right\rangle = e^{t\hat{H}}\left|p(0)\right\rangle .`,
+        latex: String.raw`\frac{d}{dt}\left|p(t)\right\rangle = \mathbb{W}\left|p(t)\right\rangle .`,
       },
       {
         kind: 'p',
-        text: 'Constructing $\\hat{H}$ is straightforward; the difficulty lies in applying $e^{t\\hat{H}}$, since $\\left|p(t)\\right\\rangle$ carries one entry for every accessible configuration and the dimension of this space grows exponentially with system size. Tensor networks provide a controlled approximation for this evolution, for which the natural first step is a diagrammatic representation of the operators.',
+        text: 'The spectrum of $\\mathbb{W}$ lies in the left half-plane, its eigenvalues having nonpositive real part, so the evolution relaxes the distribution toward its stationary state. Total probability is conserved for any mechanism, and the flat state makes this a one-line result. Applying $\\langle 1|$ to the general term above, every product of creation operators acts as the identity from the left, since $\\langle 1|a_i^{\\dagger} = \\langle 1|$, so the gain and loss brackets cancel and',
+      },
+      {
+        kind: 'eq',
+        latex: String.raw`\langle 1|\,\mathbb{W} = 0 \qquad\Longrightarrow\qquad \frac{d}{dt}\langle 1 | p(t)\rangle = \langle 1|\,\mathbb{W}\left|p(t)\right\rangle = 0 .`,
+      },
+      {
+        kind: 'p',
+        text: 'The formal solution of this equation is a matrix exponential, so the entire time evolution is fixed by the generator and the initial condition, $\\left|p(t)\\right\\rangle = e^{t\\mathbb{W}}\\left|p(0)\\right\\rangle$. Constructing $\\mathbb{W}$ is straightforward; the difficulty lies in applying $e^{t\\mathbb{W}}$, since $\\left|p(t)\\right\\rangle$ carries one entry for every accessible configuration and the dimension of this space grows exponentially with system size. Tensor networks provide a controlled approximation for this evolution.',
       },
     ],
   },
   {
     id: 'diagrams',
-    title: 'Reading the operators as tensor diagrams',
+    title: 'Tensor diagrams',
     body: [
       {
         kind: 'p',
-        text: 'Operators constructed from $a$ and $a^{\\dagger}$ are [tensors](https://tensornetwork.org/tensor/), and [tensor diagram notation](https://tensornetwork.org/diagrams/) provides a compact representation of them. In this notation a tensor is drawn as a shaded shape, and each index is a line emanating from it. The number of lines is the order of the tensor, and the number of values an index can take is its dimension; a matrix, for example, is an order-2 tensor with one incoming and one outgoing line.',
-      },
-      { kind: 'widget', widget: 'factorFig' },
-      {
-        kind: 'p',
-        text: 'Connecting two lines denotes a contraction, that is, a summation over the shared index. For example, contracting a tensor $M$ with indices $i$ and $j$ and a tensor $N$ with indices $j$, $k$, and $l$ over their shared index $j$ produces a tensor with external indices $i$, $k$, and $l$,',
-      },
-      {
-        kind: 'eq',
-        latex: String.raw`T_{ikl} = \sum_{j} M_{ij}\, N_{jkl} .`,
-      },
-      { kind: 'widget', widget: 'contractionFig' },
-      {
-        kind: 'p',
-        text: 'A line joining two shapes is an internal index of the resulting network, and each line left uncontracted is an external index. The order of the tensor computed by a diagram equals the number of external lines, so a diagram with no uncontracted indices evaluates to a scalar.',
+        text: 'Operators built from $a$ and $a^{\\dagger}$ are [tensors](https://tensornetwork.org/tensor/), and this page draws them in [tensor diagram notation](https://tensornetwork.org/diagrams/): a tensor is a shape, each line is an index, and joining two lines denotes a contraction, a summation over the shared index. That page is the reference for the notation itself, including the terms order, dimension, and rank used below.',
       },
       {
         kind: 'p',
-        text: 'These two rules, shapes with indices and contractions as summations, suffice to represent the operators introduced above and, in the following section, the full state and generator.',
+        text: 'Two features are specific to the present setting. The tensors here generate a stochastic process rather than a Hermitian observable, so a diagram is generally not symmetric under exchanging its upper and lower legs. And each external index is an occupation number, whose dimension is the number of retained states per site, while the flat state $\\langle 1|$ is a specific covector that closes a diagram to return a probability or an average.',
       },
     ],
   },
@@ -248,7 +290,11 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
     body: [
       {
         kind: 'p',
-        text: 'A single well-mixed species can be treated directly. The tensor-network representation becomes valuable when the distribution is high-dimensional, whether because the network contains many chemical species whose copy numbers are correlated or because a spatially extended system is resolved into a chain of small volumes, or voxels. In either case the degrees of freedom form a chain of sites, one per species or per voxel, each carrying its own occupation number, and a chain of $L$ sites supports a distribution over $d^{L}$ configurations once each occupation is truncated to $d$ states. Storing this distribution explicitly is intractable for all but the smallest systems.',
+        text: 'A single well-mixed species can be treated directly. The tensor-network representation becomes valuable when the distribution is high-dimensional, whether because the network contains many chemical species whose copy numbers are correlated or because a spatially extended system is resolved into a chain of small volumes, or voxels[[c:8]]. In either case the degrees of freedom form a chain of sites, one per species or per voxel, each carrying its own occupation number.',
+      },
+      {
+        kind: 'p',
+        text: 'Truncating each site at a maximum occupation $n \\le d$ retains $d+1$ states per site, so a chain of $L$ sites supports $(d+1)^{L}$ configurations. Storing this distribution explicitly is intractable for all but the smallest systems.',
       },
       {
         kind: 'p',
@@ -261,18 +307,30 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       { kind: 'widget', widget: 'mpsFig' },
       {
         kind: 'p',
-        text: 'The dimension of these internal bonds, denoted $\\chi$, controls the amount of correlation between sites that the representation can capture. It is the rank of the factorization across each bipartition of the chain, and increasing it improves accuracy at the cost of memory.',
+        text: 'The dimension of these internal bonds, denoted $\\chi$, is the rank of the factorization across each bipartition of the chain, and increasing it improves accuracy at the cost of memory.',
       },
       {
         kind: 'p',
-        text: 'The generator admits the same structure. Because each Doi-Peliti operator couples only a few sites, $\\hat{H}$ can be written as a Matrix Product Operator, a chain of factor tensors each carrying an upper and a lower external index.',
+        text: 'Across a given cut, $\\chi = 1$ means the distribution factorizes into independent halves, so $\\chi$ is a direct measure of the correlation the representation retains between the two sides. Readers from quantum many-body methods may note, as a skippable aside, that the correlation across a cut is here governed by the nonnegative rank, a nonnegative Matrix Product State being exactly a hidden Markov model, whereas $\\chi$ is the signed rank, which can be unboundedly smaller[[c:11]]; the negative factor entries a signed representation allows are both the source of its compression and the reason 2-norm truncation can produce small negative probabilities.',
+      },
+      {
+        kind: 'p',
+        text: 'The generator admits the same structure. Because each operator term couples only a few sites, $\\mathbb{W}$ can be written as a Matrix Product Operator, a chain of factor tensors each carrying an upper external index $n_i$ and a lower external index $n_i^{\\prime}$.',
       },
       { kind: 'widget', widget: 'mpoFig' },
       {
         kind: 'p',
-        text: 'Time evolution then proceeds by contracting the operator network with the state network and compressing the result to a prescribed bond dimension[[c:7]]. The controls below compare the number of parameters in the tensor-network representation with the size of the full distribution as the chain length increases.',
+        text: 'Time evolution then proceeds by contracting the operator network with the state network and compressing the result to a prescribed bond dimension[[c:9]]. The controls below compare the number of parameters in the tensor-network representation with the size of the full distribution as the chain length increases.',
+      },
+      {
+        kind: 'p',
+        text: 'Truncation is not free. On a truncated site the identity $\\langle 1|a^{\\dagger} = \\langle 1|$ acquires a boundary term, because creation from the top retained state leaves the space, so a naive hard cut-off leaks probability and $\\langle 1|\\mathbb{W} \\ne 0$ exactly. There are two honest responses. The pragmatic one is to choose $d$ generously, so that the distribution carries negligible weight near the cap, and to monitor $\\langle 1|p\\rangle$ over time as a diagnostic. The principled one is to zero the rate of every reaction step that would carry a configuration past the cap, removing that step\'s gain and loss together; this restores exact conservation on the finite space, at the price of a boundary term in the commutation relations of the truncated operators[[c:19]].',
       },
       { kind: 'widget', widget: 'interactiveChain' },
+      {
+        kind: 'p',
+        text: 'On a short chain the Matrix Product State parameter count can exceed the size of the full distribution. This is the crossover rather than a defect: a tensor network saves memory only once the chain is long enough that $(d+1)^{L}$ outgrows the parameter count, which grows linearly in $L$ at fixed bond dimension. Lengthening the chain with the first slider makes the saving appear.',
+      },
     ],
   },
   {
@@ -285,15 +343,19 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
       },
       {
         kind: 'p',
-        text: 'This procedure has been implemented for a reaction-diffusion chain by representing the distribution as a Matrix Product State and the generator as a Matrix Product Operator, and propagating the compressed state with the time-dependent variational principle[[c:6]]. The compression renders the extended chain tractable, while the operator representation preserves the exact accounting of probability flow, yielding the switching rate without a prescribed reaction coordinate.',
+        text: 'This procedure has been implemented for a reaction-diffusion chain by representing the distribution as a Matrix Product State and the generator as a Matrix Product Operator, and propagating the compressed state with the time-dependent variational principle[[c:19]]. The compression renders the extended chain tractable, while the operator representation preserves the exact accounting of probability flow, yielding the switching rate without a prescribed reaction coordinate.',
       },
       {
         kind: 'p',
-        text: 'A closely related approach applies the [density-matrix renormalization group](https://tensornetwork.org/mps/algorithms/dmrg/) to survey the rate constants of a well-mixed network, constructing the joint distribution over correlated copy numbers as a tensor network and tracking its variation across parameter space[[c:5]]. The operator construction described here provides precisely the input required by such methods.',
+        text: 'A closely related approach applies the [density-matrix renormalization group](https://tensornetwork.org/mps/algorithms/dmrg/) to survey the rate constants of a well-mixed network, constructing the joint distribution over correlated copy numbers as a tensor network and tracking its variation across parameter space[[c:20]].',
       },
       {
         kind: 'p',
-        text: 'The overall framework is modular: the Doi-Peliti construction supplies the local operator structure, tensor diagram notation makes that structure explicit, and the Matrix Product State and Operator provide the compression that extends the same formulation to systems well beyond the reach of direct enumeration.',
+        text: 'The same operator-to-tensor-network route has been developed across several communities: quantized tensor trains for the chemical master equation[[c:12]], tensor-train solvers and parameter studies[[c:13,14,15]], matrix-product-state methods for driven and large-deviation dynamics[[c:16,17,18]], and the broader treatment of stochastic mechanics with the tools of quantum many-body theory[[c:10]].',
+      },
+      {
+        kind: 'p',
+        text: 'The overall framework is modular: the occupation-number construction supplies the local operator structure, tensor diagram notation makes that structure explicit, and the Matrix Product State and Operator provide the compression that extends the same formulation to systems well beyond the reach of direct enumeration.',
       },
     ],
   },
@@ -308,36 +370,112 @@ export const REFERENCES: Reference[] = [
   },
   {
     n: 2,
+    text: 'Ya. B. Zel\'dovich and A. A. Ovchinnikov, "The mass action law and the kinetics of chemical reactions with allowance for thermodynamic fluctuations of the density," Soviet Physics JETP 47, 829 (1978).',
+  },
+  {
+    n: 3,
+    text: 'P. Grassberger and M. Scheunert, "Fock-Space Methods for Identical Classical Objects," Fortschritte der Physik 28, 547 (1980).',
+    href: 'https://doi.org/10.1002/prop.19800281004',
+    hrefLabel: 'doi:10.1002/prop.19800281004',
+  },
+  {
+    n: 4,
     text: 'L. Peliti, "Path Integral Approach to Birth-Death Processes on a Lattice," Journal de Physique 46, 1469 (1985).',
     href: 'https://doi.org/10.1051/jphys:019850046090146900',
     hrefLabel: 'doi:10.1051/jphys:019850046090146900',
   },
   {
-    n: 3,
+    n: 5,
+    text: 'U. C. Täuber, M. Howard, and B. P. Vollmayr-Lee, "Applications of field-theoretic renormalization group methods to reaction-diffusion problems," Journal of Physics A: Mathematical and General 38, R79 (2005).',
+    href: 'https://doi.org/10.1088/0305-4470/38/17/R01',
+    hrefLabel: 'doi:10.1088/0305-4470/38/17/R01',
+  },
+  {
+    n: 6,
     text: 'N. G. van Kampen, Stochastic Processes in Physics and Chemistry, 3rd ed. (North-Holland, 2007).',
   },
   {
-    n: 4,
+    n: 7,
     text: 'D. T. Gillespie, "Exact Stochastic Simulation of Coupled Chemical Reactions," Journal of Physical Chemistry 81, 2340 (1977).',
     href: 'https://doi.org/10.1021/j100540a008',
     hrefLabel: 'doi:10.1021/j100540a008',
   },
   {
-    n: 5,
-    text: 'J. P. Zima, S. B. Nicholson, and T. R. Gingrich, "Chemical master equation parameter exploration using DMRG," Journal of Chemical Physics 163, 054118 (2025).',
-    href: 'https://doi.org/10.1063/5.0276591',
-    hrefLabel: 'doi:10.1063/5.0276591',
+    n: 8,
+    text: 'R. Erban and S. J. Chapman, Stochastic Modelling of Reaction-Diffusion Processes (Cambridge University Press, 2020).',
+    href: 'https://www.cambridge.org/9781108498128',
+    hrefLabel: 'Cambridge University Press',
   },
   {
-    n: 6,
+    n: 9,
+    text: 'U. Schollwöck, "The Density-Matrix Renormalization Group in the Age of Matrix Product States," Annals of Physics 326, 96 (2011).',
+    href: 'https://doi.org/10.1016/j.aop.2010.09.012',
+    hrefLabel: 'doi:10.1016/j.aop.2010.09.012',
+  },
+  {
+    n: 10,
+    text: 'J. C. Baez and J. Biamonte, Quantum Techniques for Stochastic Mechanics (World Scientific, 2018).',
+    href: 'https://doi.org/10.1142/10623',
+    hrefLabel: 'doi:10.1142/10623',
+  },
+  {
+    n: 11,
+    text: 'I. Glasser, R. Sweke, N. Pancotti, J. Eisert, and J. I. Cirac, "Expressive power of tensor-network factorizations for probabilistic modeling," Advances in Neural Information Processing Systems 32 (2019).',
+    href: 'https://arxiv.org/abs/1907.03741',
+    hrefLabel: 'arXiv:1907.03741',
+  },
+  {
+    n: 12,
+    text: 'V. Kazeev, M. Khammash, M. Nip, and C. Schwab, "Direct Solution of the Chemical Master Equation Using Quantized Tensor Trains," PLoS Computational Biology 10, e1003359 (2014).',
+    href: 'https://doi.org/10.1371/journal.pcbi.1003359',
+    hrefLabel: 'doi:10.1371/journal.pcbi.1003359',
+  },
+  {
+    n: 13,
+    text: 'P. Gelß, S. Matera, and C. Schütte, "Solving the master equation without kinetic Monte Carlo: Tensor train approximations for a CO oxidation model," Journal of Computational Physics 314, 489 (2016).',
+    href: 'https://doi.org/10.1016/j.jcp.2016.03.025',
+    hrefLabel: 'doi:10.1016/j.jcp.2016.03.025',
+  },
+  {
+    n: 14,
+    text: 'S. V. Dolgov and B. N. Khoromskij, "Simultaneous state-time approximation of the chemical master equation using tensor product formats," Numerical Linear Algebra with Applications 22, 197 (2015).',
+    href: 'https://doi.org/10.1002/nla.1942',
+    hrefLabel: 'doi:10.1002/nla.1942',
+  },
+  {
+    n: 15,
+    text: 'S. Liao, T. Vejchodský, and R. Erban, "Tensor methods for parameter estimation and bifurcation analysis of stochastic reaction networks," Journal of the Royal Society Interface 12, 20150233 (2015).',
+    href: 'https://doi.org/10.1098/rsif.2015.0233',
+    hrefLabel: 'doi:10.1098/rsif.2015.0233',
+  },
+  {
+    n: 16,
+    text: 'M. C. Bañuls and J. P. Garrahan, "Using Matrix Product States to Study the Dynamical Large Deviations of Kinetically Constrained Models," Physical Review Letters 123, 200601 (2019).',
+    href: 'https://doi.org/10.1103/PhysRevLett.123.200601',
+    hrefLabel: 'doi:10.1103/PhysRevLett.123.200601',
+  },
+  {
+    n: 17,
+    text: 'L. Causer, M. C. Bañuls, and J. P. Garrahan, "Optimal sampling of dynamical large deviations via matrix product states," Physical Review E 103, 062144 (2021).',
+    href: 'https://doi.org/10.1103/PhysRevE.103.062144',
+    hrefLabel: 'doi:10.1103/PhysRevE.103.062144',
+  },
+  {
+    n: 18,
+    text: 'P. Helms, U. Ray, and G. K.-L. Chan, "Dynamical phase behavior of the single- and multi-lane asymmetric simple exclusion process via matrix product states," Physical Review E 100, 022101 (2019).',
+    href: 'https://doi.org/10.1103/PhysRevE.100.022101',
+    hrefLabel: 'doi:10.1103/PhysRevE.100.022101',
+  },
+  {
+    n: 19,
     text: 'S. B. Nicholson and T. R. Gingrich, "Quantifying Rare Events in Stochastic Reaction-Diffusion Dynamics Using Tensor Networks," Physical Review X 13, 041006 (2023).',
     href: 'https://doi.org/10.1103/PhysRevX.13.041006',
     hrefLabel: 'doi:10.1103/PhysRevX.13.041006',
   },
   {
-    n: 7,
-    text: 'U. Schollwock, "The Density-Matrix Renormalization Group in the Age of Matrix Product States," Annals of Physics 326, 96 (2011).',
-    href: 'https://doi.org/10.1016/j.aop.2010.09.012',
-    hrefLabel: 'doi:10.1016/j.aop.2010.09.012',
+    n: 20,
+    text: 'J. P. Zima, S. B. Nicholson, and T. R. Gingrich, "Chemical master equation parameter exploration using DMRG," Journal of Chemical Physics 163, 054118 (2025).',
+    href: 'https://doi.org/10.1063/5.0276591',
+    hrefLabel: 'doi:10.1063/5.0276591',
   },
 ]

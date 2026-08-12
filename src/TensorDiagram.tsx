@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { parseRawElementaryStep, type RawElementaryStep } from './utils'
+import LatexRenderer from './LatexRenderer'
 
 //
 // Tensor diagram primitives, following the TensorNetwork.org conventions:
@@ -116,65 +117,6 @@ const Figure: React.FC<FigureProps> = ({ caption, maxWidth = 520, viewBox, child
 )
 
 //
-// Static figure: a single factor tensor of order 3.
-//
-export const FactorTensorFigure: React.FC = () => (
-  <Figure
-    maxWidth={300}
-    viewBox="0 24 260 88"
-    caption={
-      <>
-        A single <b>tensor</b>. Each line is an index, and the number of lines is the{' '}
-        <b>order</b> of the tensor (here, order 3). The number of values an index can take is its{' '}
-        <b>dimension</b>.
-      </>
-    }
-  >
-    <TensorNode
-      x={130}
-      y={80}
-      label="T"
-      legs={[
-        { dir: 'left', label: 'i' },
-        { dir: 'up', label: 'j' },
-        { dir: 'right', label: 'k' },
-      ]}
-    />
-  </Figure>
-)
-
-//
-// Static figure: contraction of two tensors, internal vs external indices.
-//
-export const ContractionFigure: React.FC = () => (
-  <Figure
-    maxWidth={420}
-    viewBox="0 30 320 86"
-    caption={
-      <>
-        A <b>contraction</b> of two tensors: the connected line denotes summation over the shared index. That
-        line is an <b>internal index</b>, and the uncontracted lines are <b>external indices</b>.
-      </>
-    }
-  >
-    <line x1={130} y1={85} x2={190} y2={85} className="td-bond" />
-    <text x={160} y={75} className="td-index-label" textAnchor="middle">
-      j
-    </text>
-    <TensorNode x={113} y={85} label="M" legs={[{ dir: 'left', label: 'i' }]} />
-    <TensorNode
-      x={207}
-      y={85}
-      label="N"
-      legs={[
-        { dir: 'up', label: 'k' },
-        { dir: 'right', label: 'l' },
-      ]}
-    />
-  </Figure>
-)
-
-//
 // Static figure: a Matrix Product State for the probability vector |p(t)>.
 //
 export const MPSFigure: React.FC<{ sites?: number }> = ({ sites = 5 }) => {
@@ -206,7 +148,7 @@ export const MPSFigure: React.FC<{ sites?: number }> = ({ sites = 5 }) => {
 }
 
 //
-// Static figure: a Matrix Product Operator for the generator H-hat.
+// Static figure: a Matrix Product Operator for the generator W.
 //
 export const MPOFigure: React.FC<{ sites?: number }> = ({ sites = 5 }) => {
   const start = 44
@@ -220,7 +162,7 @@ export const MPOFigure: React.FC<{ sites?: number }> = ({ sites = 5 }) => {
       caption={
         <>
           A <b>Matrix Product Operator</b> for the generator{' '}
-          <span className="td-inline-math">H&#770;</span>. Each factor tensor carries an upper and a lower{' '}
+          <LatexRenderer latex={String.raw`\mathbb{W}`} displayMode={false} className="td-inline-math" />. Each factor tensor carries an upper and a lower{' '}
           external index, mapping occupation states to occupation states, and is connected to its neighbors by
           internal bond indices.
         </>
@@ -334,7 +276,7 @@ export const LiveOperatorDiagram: React.FC<{ step: RawElementaryStep }> = ({ ste
 }
 
 //
-// Live, interactive figure: the generator H-hat and state |p(t)> as tensor
+// Live, interactive figure: the generator W and state |p(t)> as tensor
 // networks on a chain of diffusing voxels. The reader sets the number of sites
 // and the bond dimension and watches the diagram and the state-space counts
 // update. This is the tensor-network picture the 2023 paper builds on.

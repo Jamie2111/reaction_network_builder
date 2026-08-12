@@ -14,8 +14,6 @@ import 'katex/dist/katex.min.css'
 import 'katex/dist/contrib/mhchem.mjs'
 import LatexRenderer from './LatexRenderer'
 import {
-  ContractionFigure,
-  FactorTensorFigure,
   InteractiveChainDiagram,
   LiveOperatorDiagram,
   MPOFigure,
@@ -203,12 +201,12 @@ function App() {
 
           <div className="paper-tools">
             <p className="paper-tools-copy">
-              Load a preset network, the reversible Schlogl model or a seven-species gene toggle switch, or
+              Load a preset network, the reversible Schlögl model or a seven-species gene toggle switch, or
               clear the mechanism and build your own.
             </p>
             <div className="paper-tools-actions">
               <button className="secondary-btn" onClick={loadSchloglPreset} type="button">
-                Load Schlogl preset
+                Load Schlögl preset
               </button>
               <button className="secondary-btn" onClick={loadGtsPreset} type="button">
                 Load GTS preset
@@ -374,10 +372,6 @@ function App() {
         return <div key={key}>{renderBuilder()}</div>
       case 'liveOperator':
         return <LiveOperatorDiagram key={key} step={currentStep} />
-      case 'factorFig':
-        return <FactorTensorFigure key={key} />
-      case 'contractionFig':
-        return <ContractionFigure key={key} />
       case 'mpsFig':
         return <MPSFigure key={key} />
       case 'mpoFig':
@@ -450,7 +444,7 @@ function App() {
               <tr>
                 <td></td>
                 <td className="backlinks">
-                  <a href="https://tensornetwork.org/">main</a>/doi_peliti/
+                  <a href="https://tensornetwork.org/">main</a>/occupation_number/
                 </td>
               </tr>
             </tbody>
