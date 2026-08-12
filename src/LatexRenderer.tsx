@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import katex from 'katex';
 import "katex/dist/katex.min.css"
 import "katex/dist/contrib/mhchem.mjs";
-import { DAGGER_MATRIX, LOWER_MATRIX, matExp, matrixToLatex } from './utils';
+import { annihilationMatrix, creationMatrix, matExp, matrixToLatex } from './utils';
 
 interface LatexRendererProps {
     latex: string;
@@ -14,8 +14,13 @@ interface LatexRendererProps {
 const MatrixTooltip: React.FC<{ dagger: boolean; exp: number; className?: string }> = ({ dagger, exp, className = '' }) => {
     const tooltipRef = useRef<HTMLSpanElement>(null);
 
-    const matrix_raised = dagger ? DAGGER_MATRIX : LOWER_MATRIX;
-    const res = matExp(matrix_raised, exp);
+    // Size the truncation to the operator so its nonzero band is always in view:
+    // a power-k ladder operator first acts at row/column k, so a (k+2)-dimensional
+    // block shows a couple of nonzero entries instead of an empty cap. Clamped so
+    // simple operators stay compact and extreme powers do not blow up the tooltip.
+    const dim = Math.min(Math.max(exp + 2, 4), 10);
+    const base = dagger ? creationMatrix(dim) : annihilationMatrix(dim);
+    const res = matExp(base, exp);
     const latex = matrixToLatex(res);
 
 

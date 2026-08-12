@@ -110,18 +110,19 @@ export const matrixToLatex = (matrix: number[][]): string => {
     return `\\begin{bmatrix} ${rows} \\end{bmatrix}`;
 };
 
-export const DAGGER_MATRIX = [
-    [0, 0, 0, 0],
-    [1, 0, 0, 0],
-    [0, 1, 0, 0],
-    [0, 0, 1, 0]
-];
-export const LOWER_MATRIX = [
-    [0, 1, 0, 0],
-    [0, 0, 2, 0],
-    [0, 0, 0, 3],
-    [0, 0, 0, 0]
-];
+// Bosonic ladder operators on a d-dimensional occupation-number truncation.
+// Creation a-dagger: a-dagger|n> = |n+1>, so 1s on the first subdiagonal.
+export const creationMatrix = (d: number): number[][] => {
+    const m = Array.from({ length: d }, () => Array(d).fill(0));
+    for (let j = 0; j + 1 < d; j++) m[j + 1][j] = 1;
+    return m;
+};
+// Annihilation a: a|n> = n|n-1>, so n on the first superdiagonal.
+export const annihilationMatrix = (d: number): number[][] => {
+    const m = Array.from({ length: d }, () => Array(d).fill(0));
+    for (let j = 1; j < d; j++) m[j - 1][j] = j;
+    return m;
+};
 
 
 export type ReactionType = 'forward' | 'equilibrium' | 'reverse';
