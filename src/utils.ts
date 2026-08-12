@@ -93,11 +93,13 @@ export const matrixToLatex = (matrix: number[][]): string => {
     if (!matrix || matrix.length === 0) return '';
 
     const cols = matrix[0].length;
-    // The operators act on the full (infinite) occupation-number ladder; this is a
-    // truncated block. Each closing ellipsis is centered inside a digit-sized cell
-    // (\vphantom{0} for height, symmetric kerns for width) with slightly smaller
-    // dots, so the ellipsis cells match the number cells: swapping an ellipsis for a
-    // number would not change the matrix size, and the dots sit on the number grid.
+    const total = cols + 1;
+    // A bmatrix separates columns far more than it separates rows, which makes the
+    // horizontal/diagonal ellipses look much farther from the numbers than the
+    // vertical one. Use an array with a tight, uniform column gap so the horizontal
+    // spacing matches the vertical. Each ellipsis is centered in a digit-sized cell
+    // so the ellipsis cells still match the number cells.
+    const spec = '@{}' + Array(total).fill('c').join('@{\\hskip 7pt}') + '@{}';
     const H = '\\kern0.25em\\mathclap{\\scriptstyle\\cdots}\\kern0.25em';
     const V = '{\\scriptstyle\\vdots}';
     const D = '\\kern0.25em\\mathclap{\\scriptstyle\\ddots}\\kern0.25em';
@@ -105,9 +107,11 @@ export const matrixToLatex = (matrix: number[][]): string => {
         row.map(cell => cell.toString()).concat(H).join(' & ')
     );
     const tailRow = Array(cols).fill(V).concat(D).join(' & ');
-    const rows = bodyRows.concat(tailRow).join(' \\\\ ');
+    // The vertical-ellipsis glyph is taller than a digit, which would push the tail
+    // row down; pull it back up so the ellipsis row sits at the number-row pitch.
+    const rows = bodyRows.join(' \\\\ ') + ' \\\\[-0.75em] ' + tailRow;
 
-    return `\\begin{bmatrix} ${rows} \\end{bmatrix}`;
+    return `\\left[\\begin{array}{${spec}}${rows}\\end{array}\\right]`;
 };
 
 // Bosonic ladder operators on a d-dimensional occupation-number truncation.
