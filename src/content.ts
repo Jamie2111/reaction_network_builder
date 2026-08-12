@@ -331,7 +331,7 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
   },
   {
     id: 'rare-events',
-    title: 'Application: rare events on a reaction-diffusion chain',
+    title: 'Rare events and rate-constant exploration',
     body: [
       {
         kind: 'p',
