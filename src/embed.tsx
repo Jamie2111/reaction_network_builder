@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client'
 // ~1.4 MB of base64 fonts. (mhchem is a small JS extension and is kept.)
 import 'katex/dist/contrib/mhchem.mjs'
 import ReactionBuilder from './ReactionBuilder'
-import { InteractiveChainDiagram } from './TensorDiagram'
+import { InteractiveChainDiagram, MPOFigure, MPSFigure } from './TensorDiagram'
 import './App.css'
 
 //
@@ -26,6 +26,8 @@ const mount = (id: string, node: React.ReactElement) => {
 
 const init = () => {
   mount('rn-builder', <ReactionBuilder />)
+  mount('rn-mps', <MPSFigure />)
+  mount('rn-mpo', <MPOFigure />)
   mount('rn-chain', <InteractiveChainDiagram seedSites={4} />)
 }
 

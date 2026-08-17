@@ -25,7 +25,6 @@ the site's Julia/`cmark` generator is required.
 | `index.bib` | The 17 references, resolved by the site's `\cite{}` mechanism. |
 | `stoch_kin_widget.js` | The compiled interactive bundle (self-mounting IIFE). |
 | `stoch_kin_widget.css` | Widget styles only (~10 KB; no KaTeX fonts). |
-| `mps.svg`, `mpo.svg` | Static tensor-diagram figures. **Still to be added** (export from the app's `TensorDiagram` components or reuse the earlier contribution SVGs). |
 
 ## Mount points
 
@@ -33,6 +32,8 @@ The bundle renders each widget only if its div is present, so the same file
 serves both:
 
 - `<div id="rn-builder"></div>` — the reaction-network builder + live operator diagram.
+- `<div id="rn-mps"></div>` — the Matrix Product State figure.
+- `<div id="rn-mpo"></div>` — the Matrix Product Operator figure.
 - `<div id="rn-chain"></div>` — the interactive chain / bond-dimension widget.
 
 ## Rebuilding the widget bundle
@@ -59,7 +60,9 @@ mounts `ReactionBuilder` and `InteractiveChainDiagram` onto the div ids above.
 3. **CSS containment.** `stoch_kin_widget.css` is derived from the app's styles,
    which were themselves copied from this site. Audit that only the widget rules
    (`td-`, builder classes) ship, and nothing bleeds into skeleton/normalize.
-4. **Static figures.** Add `mps.svg` / `mpo.svg`.
+4. **Static figures.** The MPS/MPO diagrams currently mount from the JS bundle
+   (`rn-mps`, `rn-mpo`). For a purely static rendering they could instead be
+   exported as SVG files and referenced with `![medium](mps.svg)`.
 5. **Governance.** The only non-technical question is whether the maintainer
    accepts a built JS artifact in the repo. Two clean options: commit the widget
    source alongside the bundle (auditable, rebuildable), or vendor a

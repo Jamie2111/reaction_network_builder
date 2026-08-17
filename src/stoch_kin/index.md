@@ -97,13 +97,13 @@ A Matrix Product State circumvents explicit storage. The distribution is express
 
 $$\left|p(t)\right\rangle \approx \sum_{n_1,\ldots,n_L} A^{[1]n_1}A^{[2]n_2}\cdots A^{[L]n_L}\left|n_1,\ldots,n_L\right\rangle .$$
 
-![medium](mps.svg)
+<div id="rn-mps"></div>
 
 The dimension of these internal bonds, denoted $\chi$, is the rank of the factorization across each bipartition of the chain. Across a given cut, $\chi = 1$ means the distribution factorizes into independent halves, so $\chi$ is a direct measure of the correlation the representation retains between the two sides. Because the factor tensors may carry negative entries, $\chi$ can fall well below the bond dimension a nonnegative representation would require\cite{glasser2019}; those same negative entries are why compression in the 2-norm can leave small negative probabilities.
 
 The generator admits the same structure. Because each operator term couples only a few sites, $\mathbb{W}$ can be written as a Matrix Product Operator, a chain of factor tensors each carrying an upper external index $n_i$ and a lower external index $n_i^{\prime}$.
 
-![medium](mpo.svg)
+<div id="rn-mpo"></div>
 
 Time evolution then proceeds by contracting the operator network with the state network and compressing the result to a prescribed bond dimension\cite{schollwock2011}. The controls below compare the number of parameters in the tensor-network representation with the size of the full distribution as the chain length increases.
 
