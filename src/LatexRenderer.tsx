@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import katex from 'katex';
-import "katex/dist/katex.min.css"
+// KaTeX stylesheet is imported by the app entry (App.tsx) for the standalone site,
+// and provided globally by tensornetwork.org for the embedded widget, so it is not
+// imported here (which would force it into the embed bundle as ~1.4 MB of fonts).
 import "katex/dist/contrib/mhchem.mjs";
 import { annihilationMatrix, creationMatrix, matExp, matrixToLatex } from './utils';
 

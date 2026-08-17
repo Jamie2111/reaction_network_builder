@@ -9,7 +9,6 @@ import type { RawElementaryStep } from './utils'
 /** Interactive widgets and diagrams the page can drop into a section. */
 export type SectionWidget =
   | 'builder'
-  | 'liveOperator'
   | 'interactiveChain'
   | 'mpsFig'
   | 'mpoFig'
@@ -141,7 +140,6 @@ export const ARTICLE_SECTIONS: ArticleSection[] = [
         text: 'The builder below assembles elementary steps and displays each reaction as a balanced equation together with its generated operator term; hovering over an operator reveals the truncated matrix it represents. Load a preset with the two buttons, the reversible Schlögl model or a seven-species gene toggle switch, or clear the mechanism and build your own.',
       },
       { kind: 'widget', widget: 'builder' },
-      { kind: 'widget', widget: 'liveOperator' },
     ],
   },
   {
