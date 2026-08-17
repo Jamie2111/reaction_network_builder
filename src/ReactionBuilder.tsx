@@ -1,0 +1,326 @@
+import { useState, useEffect } from 'react'
+import { formatReactionEquation, formatSecondQuantizedForm, type RawElementaryStep, type ReactionType } from './utils'
+import { GTS_PRESET, SCHLOGL_PRESET } from './content'
+import LatexRenderer from './LatexRenderer'
+import { LiveOperatorDiagram } from './TensorDiagram'
+
+//
+// The interactive reaction-network builder, extracted from App so it can be
+// mounted both by the standalone site (App.tsx) and by the embeddable widget
+// bundle (embed.tsx) that drops into a tensornetwork.org page. It owns its own
+// state and renders the builder panel together with the live operator diagram
+// beneath it, since the two share the current step.
+//
+
+const STORAGE_KEYS = {
+  STEPS: 'elementary-steps',
+  CURRENT_STEP: 'current-elementary-step',
+}
+
+const saveToStorage = (key: string, value: unknown) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(value))
+  } catch (error) {
+    console.warn('Failed to save to localStorage:', error)
+  }
+}
+
+const loadFromStorage = function <T>(key: string, defaultValue: T): T {
+  try {
+    const stored = localStorage.getItem(key)
+    return stored ? JSON.parse(stored) : defaultValue
+  } catch (error) {
+    console.warn('Failed to load from localStorage:', error)
+    return defaultValue
+  }
+}
+
+const emptyCurrentStep = {
+  id: '',
+  reactants: 'A + B',
+  products: 'C + D',
+  type: 'forward' as ReactionType,
+  forwardRate: 'c_f',
+  reverseRate: 'c_r',
+}
+
+const SecondQuantizedRenderer: React.FC<{
+  step: RawElementaryStep
+  context?: 'preview' | 'visualization'
+  stepIndex?: number
+}> = ({ step, context = 'preview', stepIndex }) => {
+  const secondQuantizedForm = formatSecondQuantizedForm(step, context, stepIndex)
+
+  if (typeof secondQuantizedForm === 'string') {
+    return <LatexRenderer latex={secondQuantizedForm} className="latex-equation" />
+  }
+
+  return (
+    <div className="equilibrium-forms">
+      <div className="equilibrium-scroll-container">
+        <div className="equilibrium-form">
+          <span className="form-label">Forward:</span>
+          <LatexRenderer latex={secondQuantizedForm.forward} className="latex-equation" />
+        </div>
+        <div className="equilibrium-form">
+          <span className="form-label">Reverse:</span>
+          <LatexRenderer latex={secondQuantizedForm.backward} className="latex-equation" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const ReactionBuilder: React.FC = () => {
+  const [steps, setSteps] = useState<RawElementaryStep[]>(() =>
+    loadFromStorage(STORAGE_KEYS.STEPS, []),
+  )
+
+  const [currentStep, setCurrentStep] = useState<RawElementaryStep>(() =>
+    loadFromStorage(STORAGE_KEYS.CURRENT_STEP, { ...emptyCurrentStep }),
+  )
+
+  const [idCounter, setIdCounter] = useState(() => Date.now())
+
+  useEffect(() => {
+    saveToStorage(STORAGE_KEYS.STEPS, steps)
+  }, [steps])
+
+  useEffect(() => {
+    saveToStorage(STORAGE_KEYS.CURRENT_STEP, currentStep)
+  }, [currentStep])
+
+  const cycleReactionType = () => {
+    const typeOrder: ReactionType[] = ['forward', 'equilibrium', 'reverse']
+    const currentIndex = typeOrder.indexOf(currentStep.type)
+    const nextIndex = (currentIndex + 1) % typeOrder.length
+    setCurrentStep({ ...currentStep, type: typeOrder[nextIndex] })
+  }
+
+  const getArrowSymbol = (type: ReactionType) => {
+    switch (type) {
+      case 'forward':
+        return '→'
+      case 'equilibrium':
+        return '⇌'
+      case 'reverse':
+        return '←'
+    }
+  }
+
+  const addStep = () => {
+    if (currentStep.reactants.trim() && currentStep.products.trim() && currentStep.forwardRate.trim()) {
+      const newStep = { ...currentStep, id: `step-${idCounter}` }
+      setSteps([...steps, newStep])
+      setIdCounter((prev) => prev + 1)
+      setCurrentStep(currentStep)
+    }
+  }
+
+  const loadPreset = (preset: typeof SCHLOGL_PRESET) => {
+    const nextSteps = preset.map((step, index) => ({
+      ...step,
+      id: `step-${idCounter + index}`,
+    }))
+
+    setSteps(nextSteps)
+    setCurrentStep({ ...preset[0], id: '' })
+    setIdCounter((prev) => prev + preset.length)
+  }
+
+  const loadSchloglPreset = () => loadPreset(SCHLOGL_PRESET)
+  const loadGtsPreset = () => loadPreset(GTS_PRESET)
+
+  const clearMechanism = () => {
+    setSteps([])
+    setCurrentStep({ ...emptyCurrentStep })
+  }
+
+  const deleteStep = (id: string) => {
+    setSteps((prevSteps) => prevSteps.filter((step) => step.id !== id))
+  }
+
+  return (
+    <>
+      <div className="builder-panel">
+        <div className="builder-grid">
+          <div className="step-builder">
+            <h4 className="form-title">Add an elementary step</h4>
+
+            <div className="paper-tools">
+              <p className="paper-tools-copy">
+                Load a preset network, the reversible Schlögl model or a seven-species gene toggle switch, or
+                clear the mechanism and build your own.
+              </p>
+              <div className="paper-tools-actions">
+                <button className="secondary-btn" onClick={loadSchloglPreset} type="button">
+                  Load Schlögl preset
+                </button>
+                <button className="secondary-btn" onClick={loadGtsPreset} type="button">
+                  Load GTS preset
+                </button>
+                <button
+                  className="secondary-btn secondary-btn-light"
+                  onClick={clearMechanism}
+                  type="button"
+                >
+                  Clear mechanism
+                </button>
+              </div>
+            </div>
+
+            <div className="reaction-builder">
+              <div className="reactants-section">
+                <textarea
+                  className="species-input reactants-input"
+                  placeholder="A + B"
+                  value={currentStep.reactants}
+                  onChange={(e) => setCurrentStep({ ...currentStep, reactants: e.target.value })}
+                  rows={2}
+                />
+              </div>
+
+              <div className="arrow-section">
+                <div
+                  className={`arrow-button-container ${
+                    currentStep.type === 'forward' || currentStep.type === 'equilibrium'
+                      ? 'has-top-input'
+                      : ''
+                  } ${
+                    currentStep.type === 'reverse' || currentStep.type === 'equilibrium'
+                      ? 'has-bottom-input'
+                      : ''
+                  }`}
+                >
+                  <div className="rate-input-container rate-above">
+                    {currentStep.type === 'forward' || currentStep.type === 'equilibrium' ? (
+                      <div className="rate-input-group">
+                        <input
+                          type="text"
+                          className="rate-input"
+                          placeholder="c_f"
+                          value={currentStep.forwardRate}
+                          onChange={(e) => setCurrentStep({ ...currentStep, forwardRate: e.target.value })}
+                        />
+                      </div>
+                    ) : (
+                      <div className="rate-input-placeholder"></div>
+                    )}
+                  </div>
+
+                  <button
+                    className="arrow-button"
+                    onClick={cycleReactionType}
+                    title="Click to cycle between forward, equilibrium, and reverse reactions"
+                  >
+                    {getArrowSymbol(currentStep.type)}
+                  </button>
+
+                  <div className="rate-input-container rate-below">
+                    {currentStep.type === 'reverse' || currentStep.type === 'equilibrium' ? (
+                      <div className="rate-input-group">
+                        <input
+                          type="text"
+                          className="rate-input"
+                          placeholder="c_r"
+                          value={currentStep.reverseRate}
+                          onChange={(e) => setCurrentStep({ ...currentStep, reverseRate: e.target.value })}
+                        />
+                      </div>
+                    ) : (
+                      <div className="rate-input-placeholder"></div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="products-section">
+                <textarea
+                  className="species-input products-input"
+                  placeholder="C + D"
+                  value={currentStep.products}
+                  onChange={(e) => setCurrentStep({ ...currentStep, products: e.target.value })}
+                  rows={2}
+                />
+              </div>
+            </div>
+
+            <div className="equation-preview">
+              <h5 className="preview-title">Balanced equation</h5>
+              <div className="preview-equation">
+                <LatexRenderer latex={formatReactionEquation(currentStep)} className="latex-equation" />
+              </div>
+            </div>
+
+            <div className="equation-preview">
+              <h5 className="preview-title">Operator form</h5>
+              <div className="preview-equation">
+                <SecondQuantizedRenderer step={currentStep} />
+              </div>
+            </div>
+
+            <button
+              className="add-step-btn"
+              onClick={addStep}
+              disabled={
+                !currentStep.reactants.trim() ||
+                !currentStep.products.trim() ||
+                !currentStep.forwardRate.trim()
+              }
+            >
+              Add elementary step
+            </button>
+          </div>
+
+          <div className="steps-list">
+            <h4 className="form-title">Mechanism ({steps.length} steps)</h4>
+
+            {steps.length === 0 ? (
+              <div className="empty-state">
+                <p>No elementary steps yet.</p>
+                <p>Add steps on the left, or load the preset, to build a generator.</p>
+              </div>
+            ) : (
+              <div className="steps-container">
+                {steps.map((step, index) => (
+                  <div key={step.id} className="step-card">
+                    <div className="step-header">
+                      <span className="step-number">Step {index + 1}</span>
+                      <button
+                        className="delete-btn"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          deleteStep(step.id)
+                        }}
+                        title="Delete this step"
+                      >
+                        ×
+                      </button>
+                    </div>
+
+                    <div className="step-equation">
+                      <LatexRenderer latex={formatReactionEquation(step)} className="latex-equation" />
+                    </div>
+
+                    <div className="step-second-quantized">
+                      <SecondQuantizedRenderer step={step} context="visualization" stepIndex={index} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <p className="operator-diagram-lead" style={{ margin: '1.25rem 0 0' }}>
+        Here is a tensor diagram depicting the current step as a generator term. It redraws whenever you edit
+        the reaction above.
+      </p>
+
+      <LiveOperatorDiagram step={currentStep} />
+    </>
+  )
+}
+
+export default ReactionBuilder

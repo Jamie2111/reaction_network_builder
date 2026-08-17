@@ -227,13 +227,12 @@ export const LiveOperatorDiagram: React.FC<{ step: RawElementaryStep }> = ({ ste
       viewBox={`0 0 410 ${height}`}
       caption={
         <>
-          The current step represented as a generator term acting on the occupation line of each species. A
-          shaded box is a creation operator{' '}
-          <LatexRenderer latex={String.raw`a^{\dagger}`} displayMode={false} className="td-inline-math" />, and an
-          open box is an annihilation operator{' '}
-          <LatexRenderer latex="a" displayMode={false} className="td-inline-math" />; the exponent gives the number of
-          molecules created or removed. The two external lines on each row are the incoming and outgoing
-          occupation indices.
+          Each horizontal wire is one species' occupation number. The box on a wire is that species'
+          operator: a shaded box creates a molecule (
+          <LatexRenderer latex={String.raw`a^{\dagger}`} displayMode={false} className="td-inline-math" />
+          ), an open box removes one (
+          <LatexRenderer latex="a" displayMode={false} className="td-inline-math" />
+          ), and the exponent gives how many.
         </>
       }
     >
